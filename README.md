@@ -18,4 +18,4 @@ Linux
 docker-compose up --build
 ```
 
-Once the containers are up and running, you can access the web application from http://localhost/ 
+Once the containers are up and running, you can access the web pplication from http://localhost/ 
