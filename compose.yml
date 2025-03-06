@@ -1,50 +1,20 @@
 services:
   backend:
-    build: backend
-    restart: always
-    secrets:
-      - db-password
-    environment:
-      MYSQL_HOST: db
-    networks:
-      - react-spring
-      - spring-mysql
-    depends_on:
-      - db
-  db:
-    # We use a mariadb image which supports both amd64 & arm64 architecture
-    image: mariadb:10.6.4-focal
-    # If you really want to use MySQL, uncomment the following line
-    #image: mysql:8.0.19
-    environment:
-      - MYSQL_DATABASE=example
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
-    restart: always
-    healthcheck:
-      test: ["CMD", "sh", "-c", "mysqladmin ping -h 127.0.0.1 -u root -p$(cat /run/secrets/db-password) --silent"]
-      interval: 3s
-      retries: 5
-      start_period: 30s
-    secrets:
-      - db-password
-    volumes:
-      - db-data:/var/lib/mysql
-    networks:
-      - spring-mysql
-  frontend:
-    build: ./app
+    build:
+      context: ./
+      target: builder
     ports:
-      - "80:80"
+      - '80:80'
+    restart: "no"
     volumes:
-      - ./app:/app
+      - ./:/app
+  frontend:
+    build: ./ui
+    ports:
+      - "3000:80"
+    volumes:
+      - ./ui:/app
       - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
-volumes:
-  db-data: {}
-secrets:
-  db-password:
-    file: db/password.txt
-networks:
-  react-spring: {}
-  spring-mysql: {}
+
