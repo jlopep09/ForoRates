@@ -10,7 +10,6 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-
-COPY ./ ./app
+COPY ./ ./
 
 CMD ["fastapi", "run", "./main.py", "--port", "80"]
