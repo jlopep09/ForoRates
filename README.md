@@ -20,8 +20,12 @@ docker-compose up --build
 
 Once the containers are up and running, you can access the web aplication from http://localhost/ 
 
+## Troubleshoot 
+
+### Updating dependencies
 If we change dependencies and get an error, we must:
- -delete node_modules
- -delete the Docker volume
- -install in UI npm install
- -docker compose up --build
+ - stop the app (locally and docker compose)
+ - delete node_modules
+ - delete the Docker volume
+ - install in .ui the dependencies with -> npm install
+ - run the app with -> docker compose up --build
