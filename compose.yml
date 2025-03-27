@@ -4,14 +4,14 @@ services:
       context: ./
       target: builder
     ports:
-      - '80:80'
+      - '3000:80'
     restart: "no"
     volumes:
       - ./:/app
   frontend:
     build: ./ui
     ports:
-      - "3000:80"
+      - "80:80"
     volumes:
       - ./ui:/app
       - /app/node_modules
