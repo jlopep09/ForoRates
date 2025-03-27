@@ -18,4 +18,10 @@ Linux
 docker-compose up --build
 ```
 
-Once the containers are up and running, you can access the web pplication from http://localhost/ 
+Once the containers are up and running, you can access the web aplication from http://localhost/ 
+
+If we change dependencies and get an error, we must:
+ -delete node_modules
+ -delete the Docker volume
+ -install in UI npm install
+ -docker compose up --build
