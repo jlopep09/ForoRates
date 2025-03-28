@@ -29,9 +29,9 @@ function ProfileMainInfo({ UserID }) {
 
   return (
     <div className="flex flex-col justify-center items-center h-full w-full my-3">
-      <p>{userData.fullname}</p>
-      <p>@{userData.username}</p>
-      <p>Score: {userData.score}</p>
+      <p>{userData[0].fullname}</p>
+      <p>@{userData[0].username}</p>
+      <p>Score: {userData[0].score}{console.log(userData)}</p>
       <div className="flex justify-center items-center h-full w-full my-3 gap-x-2">
         <Button variant="outlined">Editar</Button>
         <Button variant="outlined">Historial</Button>
