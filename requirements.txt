@@ -4,3 +4,4 @@ pytest
 flake8
 sqlalchemy
 psycopg2
+python-dotenv
