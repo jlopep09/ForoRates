@@ -2,3 +2,5 @@ fastapi[standard]
 uvicorn
 pytest
 flake8
+sqlalchemy
+psycopg2
