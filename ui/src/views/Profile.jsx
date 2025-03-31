@@ -5,27 +5,86 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ProfileMainInfo from '../components/profile-components/ProfileMainInfo';
 import { ProfileLinkSection } from '../components/profile-components/ProfileLinkSection';
+import { useEffect, useState } from "react";
+import { Button } from '@mui/material';
 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
 });
-export const Profile = () => {
-  return (
-    <>
+export const Profile = ({ UserID }) => {
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const response = await fetch(`http://localhost:3000/users/${UserID}`);
+        if (!response.ok) {
+          throw new Error("Error fetching user data");
+        }
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (UserID) {
+      fetchUserData();
+    } else {
+      setLoading(false);
+    }
+  }, [UserID]);
+
+  if (loading) {
+    return (
       <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Navbar />
+        <main className='bg-neutral-800'>
+          <div className='flex flex-col'>
+            <p className="py-8">Cargando...</p>
+          </div>
+        </main>
+      </ThemeProvider>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Navbar />
+        <main className='bg-neutral-800'>
+          <div className='flex flex-col'>
+            <p className="py-8">Ups... Parece que no estás registrado.</p>
+            <div className="flex justify-center items-center h-full w-full my-3 gap-x-2">
+              <Button variant="outlined">Sign in</Button>
+              <Button variant="outlined">Sign up</Button>
+            </div>
+          </div>
+        </main>
+      </ThemeProvider>
+    );
+  }
+
+  return (
+    <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Navbar/>
+      <Navbar />
       <main className='bg-neutral-800'>
-      <div className='flex flex-col'>
-        <ProfilePhoto UserID = {3} PhotoWidth={180} PhotoHeight={180}/>
-        <ProfileMainInfo UserID = {3}></ProfileMainInfo>
-        <ProfileLinkSection UserID={3}></ProfileLinkSection>
-      </div>
+        <div className='flex flex-col'>
+          <ProfilePhoto userData={userData} PhotoWidth={180} PhotoHeight={180} />
+          <ProfileMainInfo userData={userData} />
+          <ProfileLinkSection UserID={UserID} />
+        </div>
       </main>
     </ThemeProvider>
-    </>
-  )
-}
+  );
+};
+
 
