@@ -1,5 +1,5 @@
 import React from 'react'
-import ResponsiveAppBar from '../components/ResponsiveAppBar'
+import Navbar from '../components/Navbar'
 import { ProfilePhoto } from '../components/profile-components/ProfilePhoto'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,7 @@ export const Profile = () => {
     <>
       <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <ResponsiveAppBar/>
+      <Navbar/>
       <main className='bg-neutral-800'>
       <div className='flex flex-col'>
         <ProfilePhoto UserID = {3} PhotoWidth={180} PhotoHeight={180}/>
