@@ -1,5 +1,5 @@
 import './App.css'
-import ResponsiveAppBar from './components/ResponsiveAppBar'
+import Navbar from './components/Navbar'
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,7 +15,7 @@ export default function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <ResponsiveAppBar/>
+      <Navbar/>
       <main className='bg-stone-800'>
         <div className='flex row'>
           <ThreadCard></ThreadCard>
