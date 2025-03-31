@@ -55,7 +55,7 @@ function MiniThreadCard({ thread }) {
         component="img"
         alt={thread.title}
         height="70"
-        image={thread.image || "https://mui.com/static/images/cards/contemplative-reptile.jpg"}
+        image={thread.img_link || "https://img.freepik.com/vector-gratis/fondo-degradado-oscuro-espacio-copia_53876-99548.jpg"}
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">

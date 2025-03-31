@@ -19,9 +19,9 @@ export const Profile = () => {
       <ResponsiveAppBar/>
       <main className='bg-neutral-800'>
       <div className='flex flex-col'>
-        <ProfilePhoto PhotoWidth={180} PhotoHeight={180} PhotoLink={"https://mui.com/static/images/cards/contemplative-reptile.jpg"}/>
-        <ProfileMainInfo UserID = {1}></ProfileMainInfo>
-        <ProfileLinkSection UserID={1}></ProfileLinkSection>
+        <ProfilePhoto UserID = {3} PhotoWidth={180} PhotoHeight={180}/>
+        <ProfileMainInfo UserID = {3}></ProfileMainInfo>
+        <ProfileLinkSection UserID={3}></ProfileLinkSection>
       </div>
       </main>
     </ThemeProvider>

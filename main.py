@@ -42,20 +42,20 @@ async def get_db_structure():
 async def get_user(user_id: int):
     with engine.connect() as conn:
         result = conn.execute(
-            text('SELECT "idUser", "score", "fullname", "username", "imgLink" FROM "user" WHERE "idUser" = :user_id'),
+            text('SELECT "id", "score", "fullname", "username", "img_link" FROM "users" WHERE "id" = :user_id'),
             {"user_id": user_id}
         )
-        user = [{"id": row[0], "score": row[1], "fullname": row[2], "username": row[3], "imgLink": row[4]} for row in result]
+        user = [{"id": row[0], "score": row[1], "fullname": row[2], "username": row[3], "img_link": row[4]} for row in result]
     return user
 
 @app.get("/users/{user_id}/threads")
 async def get_threads(user_id: int):
     with engine.connect() as conn:
         result = conn.execute(
-            text('SELECT "id", "title", "content", "imgLink" FROM "thread" WHERE "idUser" = :user_id'),
+            text('SELECT "id", "title", "content", "img_link" FROM "threads" WHERE "user_id" = :user_id'),
             {"user_id": user_id}
         )
-        threads = [{"id": row[0], "title": row[1], "content": row[2], "imgLink": row[3]} for row in result]
+        threads = [{"id": row[0], "title": row[1], "content": row[2], "img_link": row[3]} for row in result]
     return threads
 
 
