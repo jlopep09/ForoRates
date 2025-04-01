@@ -6,6 +6,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 export default function UserInfoForm({ userData }) {
   const [open, setOpen] = React.useState(false);
@@ -13,6 +15,8 @@ export default function UserInfoForm({ userData }) {
     fullname: userData[0]?.fullname || '',
     img_link: userData[0]?.img_link || ''
   });
+  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [successMessage, setSuccessMessage] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -41,15 +45,25 @@ export default function UserInfoForm({ userData }) {
       if (!response.ok) {
         throw new Error('Failed to update user');
       }
-  
-      console.log('User updated successfully');
+      // Almacenar mensaje de éxito en localStorage antes de recargar
+      localStorage.setItem('infoUpdateSuccess', 'true');
       handleClose();
-      window.location.reload();  // 👈 Recarga la página completamente
+      window.location.reload();
+
     } catch (error) {
       console.error('Error updating user:', error);
+      setErrorMessage("ERROR: The user information could not be updated. Please try again later.");
     }
   };
-  
+
+  // Verificar si hay un mensaje de éxito al cargar la página
+  React.useEffect(() => {
+    if (localStorage.getItem('infoUpdateSuccess')) {
+      setSuccessMessage('User information updated successfully!');
+      // Limpiar el valor de localStorage para que no se muestre después de la recarga
+      localStorage.removeItem('infoUpdateSuccess');
+    }
+  }, []);
 
   return (
     <React.Fragment>
@@ -89,6 +103,22 @@ export default function UserInfoForm({ userData }) {
           <Button type="submit" onClick={handleSubmit}>Save</Button>
         </DialogActions>
       </Dialog>
+
+      {errorMessage && (
+        <Snackbar open={true} autoHideDuration={6000} onClose={() => setErrorMessage(null)}>
+          <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: '100%' }}>
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {successMessage && (
+        <Snackbar open={true} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}>
+          <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
+            {successMessage}
+          </Alert>
+        </Snackbar>
+      )}
     </React.Fragment>
   );
 }

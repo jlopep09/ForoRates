@@ -6,14 +6,18 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 export default function ChangePasswordForm({ userData }) {
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({
     email: userData[0]?.email || '',
-    old_password: '',  // Campo para la contraseña actual
-    new_password: '',  // Campo para la nueva contraseña
+    old_password: '',
+    new_password: '',
   });
+  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [successMessage, setSuccessMessage] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,8 +41,8 @@ export default function ChangePasswordForm({ userData }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          old_password: formData.old_password,  // Contraseña actual
-          new_password: formData.new_password,  // Nueva contraseña
+          old_password: formData.old_password,
+          new_password: formData.new_password,
         }),
       });
 
@@ -46,13 +50,24 @@ export default function ChangePasswordForm({ userData }) {
         throw new Error('Failed to update password');
       }
 
-      console.log('Password updated successfully');
+      // Almacenar mensaje de éxito en localStorage antes de recargar
+      localStorage.setItem('passwordUpdateSuccess', 'true');
       handleClose();
-      //window.location.reload();  // Recarga la página
+      window.location.reload();
     } catch (error) {
       console.error('Error updating password:', error);
+      setErrorMessage("ERROR: The password could not be updated. Please check that the information is correct and try again later.");
     }
   };
+
+  // Verificar si hay un mensaje de éxito al cargar la página
+  React.useEffect(() => {
+    if (localStorage.getItem('passwordUpdateSuccess')) {
+      setSuccessMessage('Password updated successfully!');
+      // Limpiar el valor de localStorage para que no se muestre después de la recarga
+      localStorage.removeItem('passwordUpdateSuccess');
+    }
+  }, []);
 
   return (
     <React.Fragment>
@@ -105,6 +120,22 @@ export default function ChangePasswordForm({ userData }) {
           <Button type="submit" onClick={handleSubmit}>Save</Button>
         </DialogActions>
       </Dialog>
+
+      {errorMessage && (
+        <Snackbar open={true} autoHideDuration={6000} onClose={() => setErrorMessage(null)}>
+          <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: '100%' }}>
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {successMessage && (
+        <Snackbar open={true} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}>
+          <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
+            {successMessage}
+          </Alert>
+        </Snackbar>
+      )}
     </React.Fragment>
   );
 }
