@@ -102,12 +102,19 @@ async def update_user(user_id: int, user: UserUpdate):
     updates["user_id"] = user_id
     
     with engine.begin() as conn:  # Usando engine.begin() para manejo automático de transacciones
-        conn.execute(
+        result = conn.execute(
             text(f'UPDATE "users" SET {set_clause} WHERE "id" = :user_id'),
             updates
         )
+        # Verificar si se actualizó algún registro
+        if result.rowcount == 0:
+            raise HTTPException(
+                status_code=status.HTTP_304_NOT_MODIFIED,  # Usando el código de estado 304
+                detail="No se pudieron actualizar los datos del usuario"
+            )
     
     return {"message": "Usuario actualizado"}
+
 
 @app.put("/users/{user_id}/change_password")
 async def change_password(user_id: int, password_data: PasswordChange):
