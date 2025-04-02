@@ -13,7 +13,7 @@ export const ProfileLinkSection = ({ UserID }) => {
   useEffect(() => {
     async function fetchThreads() {
       try {
-        const response = await fetch(`http://localhost:3000/users/${UserID}/threads`);
+        const response = await fetch(`http://localhost:3000/threads/${UserID}`);
         if (!response.ok) {
           throw new Error("Error fetching threads");
         }
