@@ -5,6 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import { ENDPOINTS } from '../../../constants';
 
 export const ProfileLinkSection = ({ UserID }) => {
   const [threads, setThreads] = useState([]);
@@ -13,7 +14,7 @@ export const ProfileLinkSection = ({ UserID }) => {
   useEffect(() => {
     async function fetchThreads() {
       try {
-        const response = await fetch(`http://localhost:3000/users/${UserID}/threads`);
+        const response = await fetch(`${ENDPOINTS.THREADS}/${UserID}`);
         if (!response.ok) {
           throw new Error("Error fetching threads");
         }

@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { ENDPOINTS } from '../../../constants';
 
 export default function UserInfoForm({ userData }) {
   const [open, setOpen] = React.useState(false);
@@ -34,7 +35,7 @@ export default function UserInfoForm({ userData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/users/${userData[0]?.id}`, {
+      const response = await fetch(`${ENDPOINTS.USERS}/${userData[0]?.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
