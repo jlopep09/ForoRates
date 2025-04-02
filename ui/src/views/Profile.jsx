@@ -7,6 +7,7 @@ import ProfileMainInfo from '../components/profile-components/ProfileMainInfo';
 import { ProfileLinkSection } from '../components/profile-components/ProfileLinkSection';
 import { useEffect, useState } from "react";
 import { Button } from '@mui/material';
+import { ENDPOINTS } from '../../constants';
 
 const darkTheme = createTheme({
   palette: {
@@ -20,7 +21,7 @@ export const Profile = ({ UserID }) => {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        const response = await fetch(`http://localhost:3000/users/${UserID}`);
+        const response = await fetch(`${ENDPOINTS.USERS}/${UserID}`);
         if (!response.ok) {
           throw new Error("Error fetching user data");
         }
