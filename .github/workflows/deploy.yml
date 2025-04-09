@@ -24,6 +24,8 @@ jobs:
 
       - name: Build the project
         working-directory: ui
+        env:
+          VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}  # Aquí inyectamos el secreto
         run: npm run build
         
       - name: List build directory contents 1

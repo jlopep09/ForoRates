@@ -5,8 +5,8 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import { Profile } from './views/Profile.jsx';
 
 createRoot(document.getElementById('root')).render(
-      <BrowserRouter>
-            <Routes>
+      <BrowserRouter basename={import.meta.env.VITE_BASE_URL || '/'}>
+            <Routes >
                   <Route path="/" element={<App />} />
                   <Route path="profile" element={<Profile UserID={3}/>} />
                   <Route path="login" element={<App />} />
