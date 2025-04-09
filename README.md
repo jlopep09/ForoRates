@@ -2,7 +2,7 @@
 
 React application with FastAPI backend and a Postgres database hosted on render.com
 
-
+https://jlopep09.github.io/ForoRates/
 
 ## Getting Started  
 To install the project, you need to have Docker installed.
