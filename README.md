@@ -1,24 +1,35 @@
 # ForoRates  
-ForoRates repository  
 
-React application with a Spring backend and a MySQL database.  
+React application with FastAPI backend and a Postgres database hosted on render.com
+
+
 
 ## Getting Started  
-To install the project, you need to have Docker installed.  
+To install the project, you need to have Docker installed.
+
+First you need to create a file called .env in the root directory and set the following environment variables.
+
+If you don't know what value you should assign to each variable, ask about the WhatsApp group or check the GitHub secrets of the repository.
+
+This step is necessary to avoid DDOS or similar attacks that generate computing costs.
+
+```.env
+DATABASE_URL = ""
+```
+
+
+
 To start all services, run the following command from the project's root directory (the directory containing the `compose.yml` file):  
 
-Windows
+Depending on the version of Docker you have installed, use ONE of the following commands
 ```sh
 docker compose up --build
-
 ```
-Linux
 ```sh
-
 docker-compose up --build
 ```
 
-Once the containers are up and running, you can access the web aplication from http://localhost/ 
+Once the containers are up and running, you can access the web aplication from http://localhost:80/ 
 
 ## Troubleshoot 
 
