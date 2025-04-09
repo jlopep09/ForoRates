@@ -21,14 +21,28 @@ jobs:
       - name: Install dependencies
         working-directory: ui
         run: npm install
-  
+
       - name: Build the project
         working-directory: ui
         run: npm run build
+        
+      - name: List build directory contents 1
+        run: ls -al ui/dist
+
+
+      - name: Checkout gh-pages branch
+        run: |
+          git fetch origin gh-pages
+          git checkout gh-pages
+          git reset --hard origin/gh-pages
+          
+      - name: List build directory contents 2
+        run: ls -al ui/dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets.GH_TOKEN }}
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ui/dist
+

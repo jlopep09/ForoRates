@@ -1,6 +1,6 @@
 # ForoRates  
 
-React application with FastAPI backend and a Postgres database hosted on render.com
+React application with FastAPI backend and a Postgress database hosted on render.com
 
 https://jlopep09.github.io/ForoRates/
 
