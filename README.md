@@ -15,7 +15,6 @@ This step is necessary to avoid DDOS or similar attacks that generate computing 
 
 ```.env
 DATABASE_URL = ""
-VITE_BASE_URL="/"
 ```
 
 

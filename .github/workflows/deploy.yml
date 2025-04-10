@@ -24,22 +24,11 @@ jobs:
 
       - name: Build the project
         working-directory: ui
-        env:
-          VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}  # Aquí inyectamos el secreto
         run: npm run build
         
       - name: List build directory contents 1
         run: ls -al ui/dist
 
-
-      - name: Checkout gh-pages branch
-        run: |
-          git fetch origin gh-pages
-          git checkout gh-pages
-          git reset --hard origin/gh-pages
-          
-      - name: List build directory contents 2
-        run: ls -al ui/dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

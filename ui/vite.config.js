@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.VITE_BASE_URL || '/', // Usar la variable de entorno para base
+  base: '/',
   plugins: [react(), tailwindcss()],
   server: {
     host: true, 
