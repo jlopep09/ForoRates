@@ -15,8 +15,7 @@ export const RankingTable = ({usersData}) => {
             })}
         
     </Paper>
-    <Button className='w-60' variant="contained">Refresh</Button>
- 
+    
     </>
   )
 }
