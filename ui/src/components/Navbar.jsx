@@ -13,6 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { NavLink } from 'react-router';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const pages = ['Home', 'Ranking', 'Store'];
 const settings = ['Profile', 'Settings', 'Logout'];
@@ -22,7 +23,7 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   // Simulación de datos de usuario (puedes reemplazar con datos reales o contexto)
-  const userData = null; // cambia esto por un objeto para simular sesión activa
+  const {user} = useAuth0(); // cambia esto por un objeto para simular sesión activa
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -130,7 +131,7 @@ function Navbar() {
             ))}
           </Box>
 
-          {!userData ? (
+          {!user ? (
             <Box className="flex justify-center items-center gap-x-2">
               <Button variant="outlined" color="inherit">
                 <NavLink to="/signin">Sign in</NavLink>

@@ -5,3 +5,13 @@ function SignUp() {
 }
 
 export default SignUp;
+
+const LogoutButton = () => {
+  const { logout } = useAuth0();
+
+  return (
+    <button className="justify-center" onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
+      Log out
+    </button>
+  );
+};
