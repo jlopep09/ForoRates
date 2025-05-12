@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ThreadCard from './components/ThreadCard';
+import HomePage from './views/HomePage';
 
 const darkTheme = createTheme({
   palette: {
@@ -17,11 +18,8 @@ export default function App() {
       <CssBaseline />
       <Navbar/>
       <main className='bg-stone-800'>
-        <div className='flex row'>
-          <ThreadCard></ThreadCard>
-          <ThreadCard></ThreadCard>
-          <ThreadCard></ThreadCard>
-          <ThreadCard></ThreadCard>
+        <div>
+          <HomePage></HomePage>
         </div>
 
       </main>
