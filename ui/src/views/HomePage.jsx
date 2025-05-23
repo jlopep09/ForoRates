@@ -1,25 +1,79 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import ThreadCard from "../components/home-page-components/ThreadCard";
-
-const initialPosts = [
-    { id: 1, votes: 12, user: "manolo", time: "hace 12h", title: "¿Vale la pena aprender Rust en 2025?", photo: "" },
-    { id: 2, votes: 67, user: "ana_dev", time: "hace 3h", title: "Me he pasado a Neovim y no hay vuelta atrás 😍", photo: "" },
-    { id: 3, votes: -4, user: "elias2024", time: "hace 1d", title: "Typescript está sobrevalorado. Lo dije.", photo: "" },
-    { id: 4, votes: 29, user: "luciaux", time: "hace 45min", title: "¿Consejos para empezar en freelancing como front?", photo: "" },
-    { id: 5, votes: 0, user: "pablito23", time: "hace 5h", title: "Estoy haciendo un clon de Reddit en React + Firebase 🔥", photo: "" },
-    { id: 6, votes: 83, user: "marina_k", time: "hace 2d", title: "10 VSCode extensiones que me salvaron el máster", photo: "" },
-    { id: 7, votes: 18, user: "debugQueen", time: "hace 6h", title: "¿Cómo explicar a tus padres qué haces como dev?", photo: "" },
-    { id: 8, votes: 3, user: "sergio_ai", time: "hace 20min", title: "Estoy haciendo un bot que escribe reggaetón con GPT", photo: "" }
-];
+import { ENDPOINTS } from '../../constants';
 
 const sortPosts = (posts) => {
     return [...posts].sort((a, b) => b.votes - a.votes);
 };
 
+const formatRelativeTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000); // diferencia en segundos
+
+    const minutes = Math.floor(diff / 60);
+    const hours = Math.floor(diff / 3600);
+    const days = Math.floor(diff / (3600 * 24));
+    const months = Math.floor(diff / (3600 * 24 * 30));
+    const years = Math.floor(diff / (3600 * 24 * 365));
+
+    if (diff < 60) return `hace unos segundos`;
+    if (minutes < 60) return `hace ${minutes} min`;
+    if (hours < 24) return `hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+    if (days < 30) return `hace ${days} ${days === 1 ? 'día' : 'días'}`;
+    if (months < 12) return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
+    return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
+};
+
+
 export default function HomePage() {
-    const [posts, setPosts] = useState(sortPosts(initialPosts));
+    const [posts, setPosts] = useState([]);
     const [searchText, setSearchText] = useState("");
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await fetch(`${ENDPOINTS.THREADS}?limit=50&offset=0`);
+                if (!response.ok) throw new Error("Error al obtener los posts");
+                const threads = await response.json();
+
+                // Obtenemos usuarios únicos
+                const uniqueUserIds = [...new Set(threads.map(t => t.user_id))];
+
+                // Obtenemos info de todos los usuarios en paralelo
+                const userMap = {};
+                await Promise.all(uniqueUserIds.map(async (userId) => {
+                    const res = await fetch(`${ENDPOINTS.USERS}/${userId}`);
+                    if (res.ok) {
+                        const userData = await res.json();
+                        if (userData[0]) {
+                            userMap[userId] = {
+                                username: userData[0].username,
+                                img_link: userData[0].img_link
+                            };
+                        }
+                    }
+                }));
+
+                const mappedPosts = threads.map((thread) => ({
+                    id: thread.id,
+                    title: thread.title,
+                    votes: thread.votes,
+                    user: userMap[thread.user_id]?.username || `usuario_${thread.user_id}`,
+                    time: formatRelativeTime(thread.date),
+                    photo: userMap[thread.user_id]?.img_link || ""
+                }));
+
+                setPosts(sortPosts(mappedPosts));
+            } catch (error) {
+                console.error("Error al obtener los posts:", error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
 
     const handleSearchChange = (event) => {
         setSearchText(event.target.value);
@@ -29,15 +83,27 @@ export default function HomePage() {
         post.title.toLowerCase().includes(searchText.toLowerCase())
     );
 
-
-
-    const handleVote = (id, direction) => {
+    const handleVote = async (id, direction) => {
         const updated = posts.map(post =>
             post.id === id
                 ? { ...post, votes: post.votes + (direction === "up" ? 1 : -1) }
                 : post
         );
         setPosts(sortPosts(updated));
+        try {
+            const response = await fetch(`${ENDPOINTS.THREADS}/updateLike`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ thread_id: id, direction }),
+            });
+
+            if (!response.ok) throw new Error("Error al actualizar el voto");
+            
+        } catch (error) {
+            console.error("Error al enviar voto:", error);
+        }
     };
 
     return (
