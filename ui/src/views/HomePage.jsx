@@ -38,10 +38,8 @@ export default function HomePage() {
                 if (!response.ok) throw new Error("Error al obtener los posts");
                 const threads = await response.json();
 
-                // Obtenemos usuarios únicos
                 const uniqueUserIds = [...new Set(threads.map(t => t.user_id))];
 
-                // Obtenemos info de todos los usuarios en paralelo
                 const userMap = {};
                 await Promise.all(uniqueUserIds.map(async (userId) => {
                     const res = await fetch(`${ENDPOINTS.USERS}/${userId}`);
