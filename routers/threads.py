@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -10,21 +10,72 @@ class VoteUpdate(BaseModel):
     thread_id: int
     direction: str  # "up" o "down"
 
-@router.get("/threads/{user_id}")
-async def get_threads(user_id: int, db: Session = Depends(get_db)):
-    result = db.execute(
-        text('SELECT "id", "title", "content", "img_link" FROM "threads" WHERE "user_id" = :user_id'),
-        {"user_id": user_id}
-    )
-    threads = [{"id": row[0], "title": row[1], "content": row[2], "img_link": row[3]} for row in result]
-    return threads
+@router.get("/threads/count")
+async def count_threads(
+    search: str = Query(default=None),
+    tag: str = Query(default=None),
+    db: Session = Depends(get_db)
+):
+    base_query = 'SELECT COUNT(*) FROM "threads"'
+    filters = []
+    params = {}
+
+    if search:
+        filters.append("unaccent(title) ILIKE unaccent(:search)")
+        params["search"] = f"%{search}%"
+
+    if tag:
+        filters.append("(',' || REPLACE(tags, ' ', '') || ',') ILIKE '%%,%s,%%'" % tag.lower())
+        params["tag"] = tag
+
+    if filters:
+        base_query += " WHERE " + " AND ".join(filters)
+
+    result = db.execute(text(base_query), params)
+    total = result.scalar()
+    return {"total": total}
+
+
+@router.get("/threads/tags")
+async def get_tags(db: Session = Depends(get_db)):
+    result = db.execute(text('SELECT "tags" FROM "threads"'))
+    all_tags = set()
+
+    for row in result:
+        if row[0]:  # si hay algo en tags
+            tags = [tag.strip() for tag in row[0].split(",") if tag.strip()]
+            all_tags.update(tags)
+
+    return {"tags": sorted(all_tags)}
+
 
 @router.get("/threads")
-async def list_threads(limit: int, offset: int, db: Session = Depends(get_db)):
-    result = db.execute(
-        text('SELECT "id", "title", "is_closed", "user_id", "date", "tags", "votes" FROM "threads" LIMIT :limit OFFSET :offset'),
-        {"limit": limit, "offset": offset}
-    )
+async def list_threads(
+    limit: int,
+    offset: int,
+    search: str = Query(default=None),
+    tag: str = Query(default=None),
+    db: Session = Depends(get_db)
+):
+    base_query = 'SELECT "id", "title", "is_closed", "user_id", "date", "tags", "votes" FROM "threads"'
+    filters = []
+    params = {"limit": limit, "offset": offset}
+
+    if search:
+        filters.append("unaccent(title) ILIKE unaccent(:search)")
+        params["search"] = f"%{search}%"
+
+    if tag:
+        filters.append("(',' || REPLACE(tags, ' ', '') || ',') ILIKE '%%,%s,%%'" % tag.lower())
+        params["tag"] = tag
+
+    if filters:
+        base_query += " WHERE " + " AND ".join(filters)
+
+    base_query += " ORDER BY votes DESC LIMIT :limit OFFSET :offset"
+
+    result = db.execute(text(base_query), params)
+
     threads = [{
         "id": row[0],
         "title": row[1],
@@ -34,6 +85,16 @@ async def list_threads(limit: int, offset: int, db: Session = Depends(get_db)):
         "tags": row[5],
         "votes": row[6]
     } for row in result]
+
+    return threads
+
+@router.get("/threads/{user_id}")
+async def get_threads(user_id: int, db: Session = Depends(get_db)):
+    result = db.execute(
+        text('SELECT "id", "title", "content", "img_link" FROM "threads" WHERE "user_id" = :user_id'),
+        {"user_id": user_id}
+    )
+    threads = [{"id": row[0], "title": row[1], "content": row[2], "img_link": row[3]} for row in result]
     return threads
 
 @router.post("/threads/updateLike")
