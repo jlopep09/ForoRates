@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router';
 import { Profile } from './views/Profile.jsx';
 import { Ranking } from './views/ranking/Ranking.jsx';
+import  Thread  from './views/Thread.jsx';
 
 createRoot(document.getElementById('root')).render(
       <BrowserRouter>

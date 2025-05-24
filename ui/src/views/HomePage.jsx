@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Autocomplete} from "@mui/material";
-
 import ThreadCard from "../components/home-page-components/ThreadCard";
 import { ENDPOINTS } from '../../constants';
 import { CircularProgress } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import Thread from "./Thread";
 
 const sortPosts = (posts) => {
     return [...posts].sort((a, b) => b.votes - a.votes);
@@ -41,6 +41,7 @@ export default function HomePage() {
     const [selectedTag, setSelectedTag] = useState("");
     const [selectedTagQuery, setSelectedTagQuery] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedThread, setSelectedThread] = useState(null);
     const limit = 10;
 
     useEffect(() => {
@@ -182,71 +183,78 @@ export default function HomePage() {
     };
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-full md:w-2/3 flex gap-4">
-                    <TextField
-                    variant="outlined"
-                    placeholder="Buscar publicaciones..."
-                    fullWidth
-                    value={searchText}
-                    onChange={handleSearchChange}
-                    />
-                    <Autocomplete
-                        options={tags}
-                        getOptionLabel={(option) => option}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Tags" variant="outlined" />
-                        )}
-                        className="w-[200px]"
-                        onInputChange={(event, value) => {
-                            setSelectedTag(value);
-                        }}
-                    />
-                    <Button variant="contained" color="primary" onClick={handleSearchSubmit}>
-                    Buscar
-                    </Button>
-                </div>
-            </div>
-
-            { loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <CircularProgress color="primary" />
-                </div>
+        <>
+            {selectedThread ? (
+                <Thread id={selectedThread} onBack={()=> setSelectedThread(null)}></Thread>
             ) : (
-                <>
-                    <div className="flex flex-col items-center gap-6">
-                        {posts.map((post) => (
-                            <ThreadCard
-                                key={post.id}
-                                post={post}
-                                onVote={handleVote}
+            <div className="p-6 space-y-6">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-full md:w-2/3 flex gap-4">
+                            <TextField
+                            variant="outlined"
+                            placeholder="Buscar publicaciones..."
+                            fullWidth
+                            value={searchText}
+                            onChange={handleSearchChange}
                             />
-                        ))}
+                            <Autocomplete
+                                options={tags}
+                                getOptionLabel={(option) => option}
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Tags" variant="outlined" />
+                                )}
+                                className="w-[200px]"
+                                onInputChange={(event, value) => {
+                                    setSelectedTag(value);
+                                }}
+                            />
+                            <Button variant="contained" color="primary" onClick={handleSearchSubmit}>
+                            Buscar
+                            </Button>
+                        </div>
                     </div>
-                     <div className="flex justify-center items-center gap-4 mt-6">
-                        <Button
-                            onClick={handlePreviousPage}
-                            disabled={page === 1}
-                            variant="text"
-                            className="min-w-0 p-2"
-                        >
-                            <ArrowBackIos />
-                        </Button>
 
-                        <span className="text-white">Página {page} de {totalPages}</span>
+                    { loading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <CircularProgress color="primary" />
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex flex-col items-center gap-6">
+                                {posts.map((post) => (
+                                    <ThreadCard
+                                        key={post.id}
+                                        post={post}
+                                        onVote={handleVote}
+                                        onClick={() => setSelectedThread(post.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className="flex justify-center items-center gap-4 mt-6">
+                                <Button
+                                    onClick={handlePreviousPage}
+                                    disabled={page === 1}
+                                    variant="text"
+                                    className="min-w-0 p-2"
+                                >
+                                    <ArrowBackIos />
+                                </Button>
 
-                        <Button
-                            onClick={handleNextPage}
-                            disabled={page === totalPages}
-                            variant="text"
-                            className="min-w-0 p-2"
-                        >
-                            <ArrowForwardIos />
-                        </Button>
-                    </div>
-                </>
+                                <span className="text-white">Página {page} de {totalPages}</span>
+
+                                <Button
+                                    onClick={handleNextPage}
+                                    disabled={page === totalPages}
+                                    variant="text"
+                                    className="min-w-0 p-2"
+                                >
+                                    <ArrowForwardIos />
+                                </Button>
+                            </div>
+                        </>
+                    )}
+                </div>
             )}
-        </div>
+        </>
     );
 }
