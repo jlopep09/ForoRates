@@ -5,7 +5,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-export default function ThreadCard({ post, onVote }) {
+export default function ThreadCard({ post, onVote, onClick }) {
     const [liked, setLiked] = useState(false);
 
     const toggleLike = () => setLiked(!liked);
@@ -14,8 +14,9 @@ export default function ThreadCard({ post, onVote }) {
         <Card
             className="w-full md:w-2/3 rounded-2xl shadow-md flex items-start justify-between transition-transform duration-200 hover:scale-[1.01] hover:shadow-lg cursor-pointer"
             sx={{ px: 2, py: 1 }}
+            onClick={() => onClick(post.id)}
         >
-            <div className="flex flex-col items-center mr-4 mt-1">
+            <div className="flex flex-col items-center mr-4 mt-1" >
                 <IconButton onClick={() => onVote(post.id, "up")} size="small">
                     <ArrowUpwardIcon fontSize="small" />
                 </IconButton>

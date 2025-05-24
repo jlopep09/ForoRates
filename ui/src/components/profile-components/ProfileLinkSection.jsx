@@ -14,7 +14,7 @@ export const ProfileLinkSection = ({ UserID }) => {
   useEffect(() => {
     async function fetchThreads() {
       try {
-        const response = await fetch(`${ENDPOINTS.THREADS}/${UserID}`);
+        const response = await fetch(`${ENDPOINTS.THREADS}/user/${UserID}`);
         if (!response.ok) {
           throw new Error("Error fetching threads");
         }
