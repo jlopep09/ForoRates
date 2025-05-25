@@ -8,6 +8,7 @@ import { ProfileLinkSection } from '../components/profile-components/ProfileLink
 import { useEffect, useState } from "react";
 import { Button } from '@mui/material';
 import { ENDPOINTS } from '../../constants';
+import { NavLink } from 'react-router';
 
 const darkTheme = createTheme({
   palette: {
@@ -64,8 +65,8 @@ export const Profile = ({ UserID }) => {
           <div className='flex flex-col'>
             <p className="py-8">Ups... Parece que no estás registrado.</p>
             <div className="flex justify-center items-center h-full w-full my-3 gap-x-2">
-              <Button variant="outlined">Sign in</Button>
-              <Button variant="outlined">Sign up</Button>
+              <Button variant="outlined"><NavLink to="/signin">Sign in</NavLink></Button>
+              <Button variant="outlined"><NavLink to="/signup">Sign up</NavLink></Button>
             </div>
           </div>
         </main>
