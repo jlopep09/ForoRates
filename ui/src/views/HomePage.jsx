@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Autocomplete} from "@mui/material";
+import { TextField, Button, Autocomplete} from "@mui/material";
 import ThreadCard from "../components/home-page-components/ThreadCard";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -50,6 +50,15 @@ export default function HomePage() {
     const { user: auth0User, isAuthenticated } = useAuth0();
     const [totalPages, setTotalPages] = useState(1);
     const limit = 10;
+
+    useEffect(() => {
+        const path = window.location.pathname;
+        const match = path.match(/^\/thread\/(.+)$/);
+        if (match) {
+            setSelectedThread(match[1]);
+            window.history.replaceState({}, '', '/');
+        }
+    }, []);
 
     useEffect(() => {
         setTotalPages(totalThreads === 0 ? 1 : Math.ceil(totalThreads / limit));
