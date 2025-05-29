@@ -5,4 +5,5 @@ export const ENDPOINTS = {
   THREADS: `${API_BASE_URL}/threads`,
   RANKING: `${API_BASE_URL}/ranking`,
   FAVORITES: `${API_BASE_URL}/favorites`,
+  NOTIFICATIONS: `${API_BASE_URL}/notifications`,
 };
