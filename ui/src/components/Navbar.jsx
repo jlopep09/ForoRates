@@ -14,9 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { NavLink } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
-import LoginButton from '../views/LoginButton';
+import LoginButton from './SessionButtons/LoginButton';
 import { Logout } from '@mui/icons-material';
-import LogoutButton from '../views/LogoutButton';
+import LogoutButton from './SessionButtons/LogoutButton';
 
 const pages = ['Home', 'Ranking', 'Store'];
 const settings = ['Profile', 'Settings', 'Logout'];

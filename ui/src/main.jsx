@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
         >
       <Routes >
             <Route path="/" element={<App />}/>
-            <Route path="profile" element={ <ProtectedRoute><Profile UserID={3}/></ProtectedRoute>} />
+            <Route path="profile" element={ <ProtectedRoute><Profile UserID={4}/></ProtectedRoute>} />
             <Route path="/ranking" element={<Ranking />}/>
       </Routes>
       </Auth0Provider>
