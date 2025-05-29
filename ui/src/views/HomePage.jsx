@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Autocomplete} from "@mui/material";
 import ThreadCard from "../components/home-page-components/ThreadCard";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { ENDPOINTS } from '../../constants';
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import Thread from "./Thread";
 import { useAuth0 } from '@auth0/auth0-react';
@@ -14,7 +16,7 @@ const sortPosts = (posts) => {
 const formatRelativeTime = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000); // diferencia en segundos
+    const diff = Math.floor((now - date) / 1000);
 
     const minutes = Math.floor(diff / 60);
     const hours = Math.floor(diff / 3600);
@@ -44,11 +46,18 @@ export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedThread, setSelectedThread] = useState(null);
     const [ dbUser, setDbUser ] = useState(null);
+    const [likeFilter, setLikeFilter] = useState(false);
     const { user: auth0User, isAuthenticated } = useAuth0();
+    const [totalPages, setTotalPages] = useState(1);
     const limit = 10;
 
     useEffect(() => {
+        setTotalPages(totalThreads === 0 ? 1 : Math.ceil(totalThreads / limit));
+    }, [totalThreads]);
+
+    useEffect(() => {
         const checkOrCreateUser = async () => {
+            setLoading(true);
             if (!auth0User?.email) return;
 
             try {
@@ -57,6 +66,7 @@ export default function HomePage() {
                     const data = await res.json();
                     if (data.length > 0) {
                         setDbUser(data[0]);
+                        setLoading(false);
                         return;
                     }
                 }
@@ -81,7 +91,6 @@ export default function HomePage() {
                 });
 
                 if (!createRes.ok) throw new Error("Error al crear usuario");
-                console.log("Usuario creado con éxito");
 
             } catch (error) {
                 console.error("Error al comprobar o crear usuario:", error);
@@ -93,9 +102,74 @@ export default function HomePage() {
 
     useEffect(() => {
     if (dbUser) {
-        console.log("dbUser actualizado:", dbUser);
     }
     }, [dbUser]);
+
+    useEffect(() => {
+        const fetchFavoriteThreads = async () => {
+            if (!likeFilter || !dbUser) return;
+
+            try {
+                const res = await fetch(`${ENDPOINTS.FAVORITES}/${dbUser.id}`);
+                if (!res.ok) throw new Error("Error al obtener favoritos");
+
+                const { thread_ids } = await res.json();
+
+                if (thread_ids.length === 0) {
+                    setPosts([]);
+                    return;
+                }
+
+                const params = new URLSearchParams();
+                thread_ids.forEach(id => params.append("thread_ids", id));
+
+                const threadsRes = await fetch(`${ENDPOINTS.THREADS}/by_ids?${params.toString()}`);
+                if (!threadsRes.ok) throw new Error("Error al obtener threads favoritos");
+
+                const threads = await threadsRes.json();
+
+                const uniqueUserIds = [...new Set(threads.map(t => t.user_id))];
+                const userMap = {};
+
+                await Promise.all(uniqueUserIds.map(async (userId) => {
+                    const res = await fetch(`${ENDPOINTS.USERS}/${userId}`);
+                    if (res.ok) {
+                        const userData = await res.json();
+                        if (userData[0]) {
+                            userMap[userId] = {
+                                username: userData[0].username,
+                                img_link: userData[0].img_link
+                            };
+                        }
+                    }
+                }));
+
+                const mappedPosts = threads.map((thread) => ({
+                    id: thread.id,
+                    title: thread.title,
+                    votes: thread.votes,
+                    user: userMap[thread.user_id]?.username || `usuario_${thread.user_id}`,
+                    time: formatRelativeTime(thread.date),
+                    photo: userMap[thread.user_id]?.img_link || "",
+                    tags: thread.tags || []
+                }));
+
+                setPosts(sortPosts(mappedPosts));
+            } catch (error) {
+                console.error("Error al obtener threads favoritos:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (likeFilter) {
+            setPage(1);
+            setTotalPages(1);
+            setLoading(true);
+            fetchFavoriteThreads();
+        }
+    }, [likeFilter, dbUser]);
+
 
     useEffect(() => {
         const fetchTags = async () => {
@@ -183,17 +257,16 @@ export default function HomePage() {
             }
         };
 
-        fetchPosts();
-    }, [page, searchQuery, selectedTagQuery]);
+        if (!likeFilter) {
+            fetchPosts();
+        }
 
-    let totalPages
-    if (totalThreads === 0) {
-        totalPages = 1
-    } else {
-        totalPages = Math.ceil(totalThreads / limit);
+    }, [page, searchQuery, selectedTagQuery, selectedThread, likeFilter]);
+
+    const toggleFilterFavs = () => {
+        setLikeFilter(prev => !prev);
     }
     
-
     const handlePreviousPage = () => {
         if (page > 1) setPage(page - 1);
     };
@@ -261,6 +334,13 @@ export default function HomePage() {
                                     setSelectedTag(value);
                                 }}
                             />
+                            <IconButton className="ml-4 mt-1" onClick={toggleFilterFavs}>
+                                {likeFilter ? (
+                                    <FavoriteIcon sx={{ color: "white" }} />
+                                ) : (
+                                    <FavoriteBorderIcon />
+                                )}
+                            </IconButton>
                             <Button variant="contained" color="primary" onClick={handleSearchSubmit}>
                             Buscar
                             </Button>
@@ -280,6 +360,7 @@ export default function HomePage() {
                                         post={post}
                                         onVote={handleVote}
                                         onClick={() => setSelectedThread(post.id)}
+                                        user={dbUser}
                                     />
                                 ))}
                             </div>
