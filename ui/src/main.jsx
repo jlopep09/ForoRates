@@ -3,9 +3,9 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router';
 import { Profile } from './views/Profile.jsx';
-import SignIn from './views/SignIn.jsx';
-import SignUp from './views/SignUp.jsx';
 import { Auth0Provider } from '@auth0/auth0-react';
+import ProtectedRoute from './views/ProtectedRoute.jsx';
+import { Ranking } from './views/ranking/Ranking.jsx';
 
 createRoot(document.getElementById('root')).render(
       <BrowserRouter>
@@ -17,16 +17,10 @@ createRoot(document.getElementById('root')).render(
           }}
         >
       <Routes >
-            <Route path="/" element={<App />} />
-            <Route path="profile" element={<Profile UserID={3}/>} />
-            <Route path="login" element={<App />} />
-            <Route path="register" element={<App/>} />
-            <Route path="signin" element={<SignIn/>} />
-            <Route path="signup" element={<SignUp/>} />
+            <Route path="/" element={<App />}/>
+            <Route path="profile" element={ <ProtectedRoute><Profile UserID={4}/></ProtectedRoute>} />
+            <Route path="/ranking" element={<Ranking />}/>
       </Routes>
-
       </Auth0Provider>
-
-
     </BrowserRouter>
 )
