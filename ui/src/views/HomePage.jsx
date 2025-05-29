@@ -5,6 +5,7 @@ import { ENDPOINTS } from '../../constants';
 import { CircularProgress } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import Thread from "./Thread";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const sortPosts = (posts) => {
     return [...posts].sort((a, b) => b.votes - a.votes);
@@ -42,7 +43,59 @@ export default function HomePage() {
     const [selectedTagQuery, setSelectedTagQuery] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedThread, setSelectedThread] = useState(null);
+    const [ dbUser, setDbUser ] = useState(null);
+    const { user: auth0User, isAuthenticated } = useAuth0();
     const limit = 10;
+
+    useEffect(() => {
+        const checkOrCreateUser = async () => {
+            if (!auth0User?.email) return;
+
+            try {
+                const res = await fetch(`${ENDPOINTS.USERS}?email=${auth0User.email}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.length > 0) {
+                        setDbUser(data[0]);
+                        return;
+                    }
+                }
+
+                const newUser = {
+                    fullname: auth0User.name,
+                    username: auth0User.nickname,
+                    email: auth0User.email,
+                    img_link: auth0User.picture,
+                    is_admin: false,
+                    reputation: 0,
+                    score: 0,
+                    password: "google"
+                };
+
+                const createRes = await fetch(`${ENDPOINTS.USERS}/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newUser),
+                });
+
+                if (!createRes.ok) throw new Error("Error al crear usuario");
+                console.log("Usuario creado con éxito");
+
+            } catch (error) {
+                console.error("Error al comprobar o crear usuario:", error);
+            }
+        };
+
+        checkOrCreateUser();
+    }, [auth0User]);
+
+    useEffect(() => {
+    if (dbUser) {
+        console.log("dbUser actualizado:", dbUser);
+    }
+    }, [dbUser]);
 
     useEffect(() => {
         const fetchTags = async () => {

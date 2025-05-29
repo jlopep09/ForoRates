@@ -64,6 +64,18 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     ]
     return user
 
+@router.get("/users")
+async def get_user_by_email(email: str, db: Session = Depends(get_db)):
+    result = db.execute(
+        text('SELECT * FROM "users" WHERE "email" = :email'),
+        {"email": email}
+    )
+    user = result.fetchone()
+    if not user:
+        return []
+
+    return [dict(user._mapping)]
+
 
 @router.post("/users/")
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
