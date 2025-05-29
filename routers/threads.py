@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from typing import List
 from db import get_db
 
 router = APIRouter()
@@ -95,6 +96,35 @@ async def get_threads(user_id: int, db: Session = Depends(get_db)):
         {"user_id": user_id}
     )
     threads = [{"id": row[0], "title": row[1], "content": row[2], "img_link": row[3]} for row in result]
+    return threads
+
+@router.get("/threads/by_ids")
+async def get_threads_by_ids(thread_ids: List[int] = Query(...), db: Session = Depends(get_db)):
+    if not thread_ids:
+        return []
+    placeholders = ", ".join([":id" + str(i) for i in range(len(thread_ids))])
+    sql = f'''
+        SELECT "id", "title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes"
+        FROM "threads"
+        WHERE "id" IN ({placeholders})
+        ORDER BY "votes" DESC
+    '''
+    params = {f"id{i}": tid for i, tid in enumerate(thread_ids)}
+    result = db.execute(text(sql), params)
+    threads = [
+        {
+            "id": row[0],
+            "title": row[1],
+            "content": row[2],
+            "is_closed": row[3],
+            "img_link": row[4],
+            "user_id": row[5],
+            "date": row[6],
+            "tags": row[7],
+            "votes": row[8],
+        }
+        for row in result
+    ]
     return threads
 
 @router.get("/threads/{thread_id}")

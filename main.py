@@ -4,6 +4,7 @@ from sqlalchemy import inspect
 from routers.users import router as router_users
 from routers.threads import router as router_threads
 from routers.ranking import router as router_ranking
+from routers.favorites import router as router_favorites
 from sqlalchemy.orm import Session
 from db import get_db, engine
 
@@ -35,3 +36,4 @@ async def get_db_structure(db: Session = Depends(get_db)):
 app.include_router(router_users)
 app.include_router(router_threads)
 app.include_router(router_ranking)
+app.include_router(router_favorites)
