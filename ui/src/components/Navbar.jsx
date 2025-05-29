@@ -14,6 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { NavLink } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
+import LoginButton from '../views/LoginButton';
+import { Logout } from '@mui/icons-material';
+import LogoutButton from '../views/LogoutButton';
 
 const pages = ['Home', 'Ranking', 'Store'];
 const settings = ['Profile', 'Settings', 'Logout'];
@@ -133,12 +136,7 @@ function Navbar() {
 
           {!user ? (
             <Box className="flex justify-center items-center gap-x-2">
-              <Button variant="outlined" color="inherit">
-                <NavLink to="/signin">Sign in</NavLink>
-              </Button>
-              <Button variant="outlined" color="inherit">
-                <NavLink to="/signup">Sign up</NavLink>
-              </Button>
+              <LoginButton/>
             </Box>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
@@ -163,13 +161,21 @@ function Navbar() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem key={"profile"} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">
-                      <NavLink to={`/${setting.toLowerCase()}`}>{setting}</NavLink>
+                      <NavLink to={`/profile`}><Button variant='text'>Profile</Button></NavLink>
                     </Typography>
                   </MenuItem>
-                ))}
+                  <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">
+                      <NavLink to={`/settings`}><Button variant='text'>Settings</Button></NavLink>
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem key={"Logout"} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">
+                      <LogoutButton></LogoutButton>
+                    </Typography>
+                  </MenuItem>
               </Menu>
             </Box>
           )}
