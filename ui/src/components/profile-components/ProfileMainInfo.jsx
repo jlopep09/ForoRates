@@ -1,6 +1,5 @@
 import { Button } from "@mui/material";
 import UserInfoForm from "./UserInfoForm";
-import ChangePasswordForm from "./ChangePasswordForm";
 
 function ProfileMainInfo({ userData }) {
 
@@ -14,7 +13,6 @@ function ProfileMainInfo({ userData }) {
       <p>Score: {userData[0].score}{console.log(userData)}</p>
       <div className="flex justify-center items-center h-full w-full my-3 gap-x-2">
         <UserInfoForm userData={userData}/>
-        <ChangePasswordForm userData={userData}/>
       </div>
     </div>
   );
