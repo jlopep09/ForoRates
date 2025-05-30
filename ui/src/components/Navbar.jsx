@@ -184,12 +184,12 @@ function NotificationMenu({
   );
 }
 
-function UserMenu({ anchorEl, open, handleOpen, handleClose }) {
+function UserMenu({ anchorEl, open, handleOpen, handleClose, dbUser }) {
   return (
     <>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpen} sx={{ p: 0 }}>
-          <Avatar alt="User" src="/static/images/avatar/2.jpg" />
+          <Avatar alt="User" src={dbUser.img_link? dbUser.img_link : "/static/images/avatar/2.jpg"} />
         </IconButton>
       </Tooltip>
       <Menu
@@ -298,12 +298,16 @@ function Navbar() {
                 markAllAsRead={markAllAsRead}
                 deleteAllNotifications={deleteAllNotifications}
               />
-              <UserMenu
-                anchorEl={anchorElUser}
-                open={Boolean(anchorElUser)}
-                handleOpen={handleOpenUser}
-                handleClose={handleCloseUser}
-              />
+              {dbUser && (
+                <UserMenu
+                  anchorEl={anchorElUser}
+                  open={Boolean(anchorElUser)}
+                  handleOpen={handleOpenUser}
+                  handleClose={handleCloseUser}
+                  dbUser={dbUser}
+                />
+              )}
+
             </>
           )}
         </Toolbar>
