@@ -7,7 +7,7 @@ export const ProfilePhoto = ({userData , PhotoWidth, PhotoHeight}) => {
     <div className='flex justify-center items-center h-full w-full my-8'>
       <Avatar
         alt="Remy Sharp"
-        src={userData[0].img_link}
+        src={userData.img_link? userData.img_link : "https://i.imgur.com/4KZc6bH.png"}
         sx={{ width: PhotoWidth, height: PhotoHeight }}
       />
     </div>
