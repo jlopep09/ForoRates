@@ -9,6 +9,7 @@ import { Button } from '@mui/material';
 import { ENDPOINTS } from '../../constants';
 import LoginButton from '../components/SessionButtons/LoginButton';
 import { useAuth0 } from '@auth0/auth0-react';
+import Thread from '../views/Thread.jsx';
 
 const darkTheme = createTheme({
   palette: {
@@ -20,6 +21,9 @@ export const Profile = () => {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth0();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedThreadId, setSelectedThreadId] = useState(null);
+
+  const handleBackFromThread = () => setSelectedThreadId(null);
 
   useEffect(() => {
     async function fetchUserData(email) {
@@ -74,7 +78,18 @@ export const Profile = () => {
       </ThemeProvider>
     );
   }
-
+  if (selectedThreadId) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Navbar />
+        <main className='bg-neutral-800'>
+          <Thread id={selectedThreadId} onBack={handleBackFromThread} />
+          
+        </main>
+      </ThemeProvider>
+    );
+  }
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -83,7 +98,7 @@ export const Profile = () => {
         <div className='flex flex-col'>
           <ProfilePhoto userData={userData} PhotoWidth={180} PhotoHeight={180} />
           <ProfileMainInfo userData={userData} />
-          <ProfileLinkSection UserID={userData.id} />
+          <ProfileLinkSection UserID={userData.id} onThreadSelect={setSelectedThreadId} />
         </div>
       </main>
     </ThemeProvider>
