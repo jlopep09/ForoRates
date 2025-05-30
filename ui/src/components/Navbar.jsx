@@ -22,8 +22,6 @@ import Delete from '@mui/icons-material/Delete';
 import DoneAll from '@mui/icons-material/DoneAll';
 import { ENDPOINTS } from '../../constants';
 
-const pages = ['Home', 'Ranking', 'Store'];
-const settings = ['Profile', 'Settings', 'Logout'];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -209,13 +207,21 @@ function Navbar() {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+              <MenuItem key={"home"} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <NavLink to={`/${page.toLowerCase()}`}>{page}</NavLink>
+                    <NavLink to={`/`}>{"HOME"}</NavLink>
                   </Typography>
                 </MenuItem>
-              ))}
+                <MenuItem key={"ranking"} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    <NavLink to={`/ranking`}>{"RANKING"}</NavLink>
+                  </Typography>
+                </MenuItem>
+                <MenuItem key={"shop"} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    <NavLink to={`/shop`}>{"SHOP"}</NavLink>
+                  </Typography>
+                </MenuItem>
             </Menu>
           </Box>
 
@@ -240,15 +246,27 @@ function Navbar() {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
+            <Button
+                key={"home"}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                <NavLink to={`/${page.toLowerCase()}`}>{page}</NavLink>
+                <NavLink to={`/`}>{"HOME"}</NavLink>
               </Button>
-            ))}
+              <Button
+                key={"ranking"}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                <NavLink to={`/ranking`}>{"RANKING"}</NavLink>
+              </Button>
+              <Button
+                key={"shop"}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                <NavLink to={`/shop`}>{"SHOP"}</NavLink>
+              </Button>
           </Box>
 
           {!user ? (
