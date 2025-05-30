@@ -6,6 +6,7 @@ import { Profile } from './views/Profile.jsx';
 import { Auth0Provider } from '@auth0/auth0-react';
 import ProtectedRoute from './views/ProtectedRoute.jsx';
 import { Ranking } from './views/ranking/Ranking.jsx';
+import { Shop } from './views/Shop.jsx';
 
 createRoot(document.getElementById('root')).render(
       <BrowserRouter>
@@ -20,7 +21,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/" element={<App />}/>
             <Route path="profile" element={ <ProtectedRoute><Profile UserID={4}/></ProtectedRoute>} />
             <Route path="/ranking" element={<Ranking />}/>
-            <Route path="/shop" element={<Ranking />}/>
+            <Route path="/shop" element={<Shop />}/>
             <Route path="/thread/:id" element={<App />} />
       </Routes>
       </Auth0Provider>
