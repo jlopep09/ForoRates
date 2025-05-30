@@ -21,7 +21,6 @@ class UserCreate(BaseModel):
     is_admin: bool = False
     reputation: int = 0
     score: int = 0
-    password: str
 
 class UserUpdate(BaseModel):
     fullname: str = None
@@ -31,10 +30,6 @@ class UserUpdate(BaseModel):
     is_admin: bool = None
     reputation: int = None
     score: int = None
-
-class PasswordChange(BaseModel):
-    old_password: str
-    new_password: str
 
 
 """
@@ -80,8 +75,8 @@ async def get_user_by_email(email: str, db: Session = Depends(get_db)):
 @router.post("/users/")
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     result = db.execute(
-        text('''INSERT INTO "users" ("fullname", "username", "email", "img_link", "is_admin", "reputation", "score", "password") 
-                VALUES (:fullname, :username, :email, :img_link, :is_admin, :reputation, :score, :password) RETURNING "id"'''),
+        text('''INSERT INTO "users" ("fullname", "username", "email", "img_link", "is_admin", "reputation", "score") 
+                VALUES (:fullname, :username, :email, :img_link, :is_admin, :reputation, :score) RETURNING "id"'''),
         user.dict()
     )
     user_id = result.fetchone()[0]
@@ -111,27 +106,3 @@ async def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_
     
     return {"message": "Usuario actualizado"}
 
-
-@router.put("/users/{user_id}/change_password")
-async def change_password(user_id: int, password_data: PasswordChange, db: Session = Depends(get_db)):
-    # Verificar la contraseña actual del usuario en la base de datos
-    result = db.execute(
-        text('SELECT "password" FROM "users" WHERE "id" = :user_id'),
-        {"user_id": user_id}
-    )
-    current_password = result.fetchone()
-
-    if not current_password or current_password[0] != password_data.old_password:
-        raise HTTPException(
-            status_code=status.HTTP_304_NOT_MODIFIED,
-            detail="La contraseña actual no es correcta"
-        )
-    
-    # Actualizar la contraseña
-    db.execute(
-        text('UPDATE "users" SET "password" = :new_password WHERE "id" = :user_id'),
-        {"user_id": user_id, "new_password": password_data.new_password}
-    )
-    db.commit()  # Guardar los cambios
-    
-    return {"message": "Contraseña actualizada con éxito"}
