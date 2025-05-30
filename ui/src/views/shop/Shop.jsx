@@ -86,7 +86,7 @@ export const Shop = () => {
       <main className='bg-neutral-800'>
         <div className='flex flex-row justify-center gap-10'>
           <div className='flex flex-col items-center justify-center'>
-            <ProfilePhoto userData={userData} PhotoWidth={180} PhotoHeight={180} />
+            <ProfilePhoto userData={userData} PhotoWidth={150} PhotoHeight={150} />
           </div>
           <div className='flex flex-col items-center justify-center'><UserBalance UserData={userData} /></div>
           
