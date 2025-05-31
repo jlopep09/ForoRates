@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ENDPOINTS } from '../../../../constants';
+import { Paper } from '@mui/material';
 
 export const ShopCatalog = ({ userData }) => {
   const [benefits, setBenefits] = useState([]);
@@ -61,7 +62,7 @@ export const ShopCatalog = ({ userData }) => {
       }
 
       const data = await response.json();
-      alert('Compra realizada con éxito: ' + data.msg);
+      alert('Compra realizada con éxito.');
       console.log('Respuesta del backend:', data);
 
       // Refrescar lista de beneficios para reflejar el nuevo/actualizado
@@ -91,7 +92,7 @@ export const ShopCatalog = ({ userData }) => {
     <section>
       <div className="flex flex-col items-center justify-center p-2">
         <h2 className="text-2xl font-bold mb-4">Catálogo de la tienda</h2>
-        <div className="bg-stone-300 text-black p-6 rounded-lg shadow-md w-full max-w-3xl pb-3">
+        <Paper elevation={2} className="p-6 rounded-lg shadow-md w-full max-w-3xl pb-3">
           <p className="text-md mb-1">
             Disfruta de estas ventajas gastando los puntos obtenidos.
           </p>
@@ -101,7 +102,7 @@ export const ShopCatalog = ({ userData }) => {
           {loadingBenefits ? (
             <p className="mt-4 text-center">Cargando beneficios...</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 justify-items-center sm:justify-items-stretch">
+            <Paper className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 justify-items-center sm:justify-items-stretch">
               <ShopItem
                 name="Destaca tus hilos"
                 description="Las portadas de tus hilos serán más visibles y atractivas durante 24h."
@@ -118,14 +119,14 @@ export const ShopCatalog = ({ userData }) => {
                 onBuy={handleBuy}
                 disabled={isBenefitActive('Doble de puntos')}
               />
-            </div>
+            </Paper>
           )}
 
-          <p className="text-md mt-2">
+          <p className="text-md mt-2 text-neutral-400">
             Recuerda que para ganar puntos solo tendrás que participar en hilos de
             otros usuarios.
           </p>
-        </div>
+        </Paper>
       </div>
     </section>
   );
@@ -133,19 +134,19 @@ export const ShopCatalog = ({ userData }) => {
 
 function ShopItem({ name, description, price, image, onBuy, disabled }) {
   return (
-    <div className="flex flex-col justify-between bg-white rounded-lg shadow-md p-4 w-full max-w-sm">
+    <Paper elevation={4} className="flex flex-col justify-between rounded-lg shadow-md p-4 w-full max-w-sm">
       <img
         src={image}
         alt={name}
         className="w-full h-28 object-contain rounded-t-lg"
       />
       <h3 className="text-lg font-semibold mt-1">{name}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
+      <p className=" text-sm text-neutral-400">{description}</p>
       <p className="text-md font-bold mt-2">Precio: {price} puntos</p>
       <button
-        className={`px-8 py-1 rounded mt-2 text-white ${
+        className={`px-8 py-1 rounded mt-2 text-black ${
           disabled
-            ? 'bg-gray-400 cursor-not-allowed'
+            ? 'bg-green-800 cursor-not-allowed'
             : 'bg-blue-500 hover:bg-blue-600'
         }`}
         onClick={() => onBuy(name, price)}
@@ -153,6 +154,6 @@ function ShopItem({ name, description, price, image, onBuy, disabled }) {
       >
         {disabled ? 'Activo' : 'Comprar'}
       </button>
-    </div>
+    </Paper>
   );
 }

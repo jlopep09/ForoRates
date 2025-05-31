@@ -5,7 +5,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ProfileMainInfo from '../../components/profile-components/ProfileMainInfo.jsx';
 import { ProfileLinkSection } from '../../components/profile-components/ProfileLinkSection.jsx';
-import { Button } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import { ENDPOINTS } from '../../../constants.js';
 import LoginButton from '../../components/SessionButtons/LoginButton.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
