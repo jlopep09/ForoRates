@@ -74,6 +74,19 @@ async def get_user_by_email(email: str, db: Session = Depends(get_db)):
 
 @router.post("/users/")
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    # 1. Comprobar si ya existe un usuario con ese email
+    existing_user = db.execute(
+        text('SELECT "id" FROM "users" WHERE "email" = :email'),
+        {"email": user.email}
+    ).fetchone()
+
+    if existing_user:
+        return {
+            "message": "El usuario ya existe",
+            "user_id": existing_user[0]
+        }
+
+    # 2. Insertar nuevo usuario si no existe
     result = db.execute(
         text('''INSERT INTO "users" ("fullname", "username", "email", "img_link", "is_admin", "reputation", "score") 
                 VALUES (:fullname, :username, :email, :img_link, :is_admin, :reputation, :score) RETURNING "id"'''),
@@ -81,7 +94,11 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     )
     user_id = result.fetchone()[0]
     db.commit()  # Confirmar la transacción
-    return {"message": "Usuario creado", "user_id": user_id}
+
+    return {
+        "message": "Usuario creado",
+        "user_id": user_id
+    }
 
 
 @router.put("/users/{user_id}")
