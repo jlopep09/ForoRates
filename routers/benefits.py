@@ -38,7 +38,7 @@ def create_notification(
     user_row = db.execute(
         text("SELECT score FROM users WHERE id = :user_id"),
         {"user_id": user_id}
-    ).fetchone()
+    ).mappings().fetchone()
 
     if not user_row:
         # Si el usuario no existe
