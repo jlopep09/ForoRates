@@ -226,7 +226,7 @@ function Navbar() {
           const data = await res.json();
           if (data.length) return setDbUser(data[0]);
         }
-        const newUser = { fullname: user.name, username: user.nickname, email: user.email, img_link: user.picture, is_admin: false, reputation: 0, score: 0, password: 'google' };
+        const newUser = { fullname: user.name, username: user.nickname, email: user.email, img_link: user.picture, is_admin: false, reputation: 0, score: 0 };
         await fetch(`${ENDPOINTS.USERS}/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newUser) });
       } catch (e) { console.error(e); }
     };
