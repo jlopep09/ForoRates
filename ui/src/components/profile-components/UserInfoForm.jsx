@@ -13,8 +13,8 @@ import { ENDPOINTS } from '../../../constants';
 export default function UserInfoForm({ userData }) {
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({
-    fullname: userData[0]?.fullname || '',
-    img_link: userData[0]?.img_link || ''
+    fullname: userData?.fullname || '',
+    img_link: userData?.img_link || ''
   });
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [successMessage, setSuccessMessage] = React.useState(null);
@@ -35,7 +35,7 @@ export default function UserInfoForm({ userData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`${ENDPOINTS.USERS}/${userData[0]?.id}`, {
+      const response = await fetch(`${ENDPOINTS.USERS}/${userData?.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

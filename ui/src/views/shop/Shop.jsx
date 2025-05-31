@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
-import { ProfilePhoto } from '../components/profile-components/ProfilePhoto';
+import Navbar from '../../components/Navbar.jsx';
+import { ProfilePhoto } from '../../components/profile-components/ProfilePhoto.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import ProfileMainInfo from '../components/profile-components/ProfileMainInfo';
-import { ProfileLinkSection } from '../components/profile-components/ProfileLinkSection';
-import { Button } from '@mui/material';
-import { ENDPOINTS } from '../../constants';
-import LoginButton from '../components/SessionButtons/LoginButton';
+import ProfileMainInfo from '../../components/profile-components/ProfileMainInfo.jsx';
+import { ProfileLinkSection } from '../../components/profile-components/ProfileLinkSection.jsx';
+import { Button, Paper } from '@mui/material';
+import { ENDPOINTS } from '../../../constants.js';
+import LoginButton from '../../components/SessionButtons/LoginButton.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
-import Thread from '../views/Thread.jsx';
+import Thread from '../Thread.jsx';
+import { UserBalance } from './shop-components/UserBalance.jsx';
+import { ShopCatalog } from './shop-components/ShopCatalog.jsx';
 
 const darkTheme = createTheme({
   palette: {
@@ -17,13 +19,11 @@ const darkTheme = createTheme({
   },
 });
 
-export const Profile = () => {
+export const Shop = () => {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth0();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedThreadId, setSelectedThreadId] = useState(null);
 
-  const handleBackFromThread = () => setSelectedThreadId(null);
 
   useEffect(() => {
     async function fetchUserData(email) {
@@ -78,28 +78,20 @@ export const Profile = () => {
       </ThemeProvider>
     );
   }
-  if (selectedThreadId) {
-    return (
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <Navbar />
-        <main className='bg-neutral-800'>
-          <Thread id={selectedThreadId} onBack={handleBackFromThread} />
-          
-        </main>
-      </ThemeProvider>
-    );
-  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Navbar />
       <main className='bg-neutral-800'>
-        <div className='flex flex-col'>
-          <ProfilePhoto userData={userData} PhotoWidth={180} PhotoHeight={180} />
-          <ProfileMainInfo userData={userData} />
-          <ProfileLinkSection UserID={userData.id} onThreadSelect={setSelectedThreadId} />
+        <div className='flex flex-row justify-center gap-10'>
+          <div className='flex flex-col items-center justify-center'>
+            <ProfilePhoto userData={userData} PhotoWidth={150} PhotoHeight={150} />
+          </div>
+          <div className='flex flex-col items-center justify-center'><UserBalance UserData={userData} /></div>
+          
         </div>
+        <ShopCatalog  userData={userData}/>
       </main>
     </ThemeProvider>
   );

@@ -7,14 +7,14 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { ENDPOINTS } from '../../../constants';
 
-export const ProfileLinkSection = ({ UserID }) => {
+export const ProfileLinkSection = ({ UserID, onThreadSelect }) => {
   const [threads, setThreads] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     async function fetchThreads() {
       try {
-        const response = await fetch(`${ENDPOINTS.THREADS}/${UserID}`);
+        const response = await fetch(`${ENDPOINTS.THREADS}/user/${UserID}`);
         if (!response.ok) {
           throw new Error("Error fetching threads");
         }
@@ -42,34 +42,36 @@ export const ProfileLinkSection = ({ UserID }) => {
     <div className='flex flex-row gap-3 justify-center items-center'>
       <Button onClick={handlePrev} disabled={currentIndex === 0}>Prev</Button>
       {threads.slice(currentIndex, currentIndex + 4).map(thread => (
-        <MiniThreadCard key={thread.id} thread={thread} />
+        <MiniThreadCard
+          key={thread.id}
+          thread={thread}
+          onClick={() => onThreadSelect(thread.id)}
+        />
       ))}
       <Button onClick={handleNext} disabled={currentIndex + 4 >= threads.length}>Next</Button>
     </div>
   );
 };
 
-function MiniThreadCard({ thread }) {
+const MiniThreadCard = ({ thread, onClick }) => {
   return (
-    <Card sx={{ maxWidth: 215 }}>
-      <CardMedia
-        component="img"
-        alt={thread.title}
-        height="70"
-        image={thread.img_link || "https://img.freepik.com/vector-gratis/fondo-degradado-oscuro-espacio-copia_53876-99548.jpg"}
-      />
+    <Card onClick={onClick} className="cursor-pointer max-w-xs hover:shadow-lg transition">
+      {thread.img_link && (
+        <CardMedia
+          component="img"
+          height="140"
+          image={thread.img_link}
+          alt="thread thumbnail"
+        />
+      )}
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
           {thread.title}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {thread.description}
+        <Typography variant="body2" color="text.secondary">
+          {thread.content.slice(0, 50)}...
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
-      </CardActions>
     </Card>
   );
-}
+};
