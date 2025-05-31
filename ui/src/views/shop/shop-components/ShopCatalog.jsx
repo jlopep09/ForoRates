@@ -58,7 +58,7 @@ export const ShopCatalog = ({ userData }) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Error del servidor: ${errorText}`);
+        throw new Error(`No se ha podido realizar la transacción: ${errorText}`);
       }
 
       const data = await response.json();
@@ -73,7 +73,7 @@ export const ShopCatalog = ({ userData }) => {
       }
     } catch (error) {
       console.error('Error al realizar la compra:', error);
-      alert('Hubo un problema al realizar la compra.');
+      alert('Hubo un problema al realizar la compra. '+error);
     }
   };
 
