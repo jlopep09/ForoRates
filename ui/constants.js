@@ -6,4 +6,5 @@ export const ENDPOINTS = {
   RANKING: `${API_BASE_URL}/ranking`,
   FAVORITES: `${API_BASE_URL}/favorites`,
   NOTIFICATIONS: `${API_BASE_URL}/notifications`,
+  BENEFITS: `${API_BASE_URL}/benefits`,
 };

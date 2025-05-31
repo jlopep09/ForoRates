@@ -91,7 +91,7 @@ export const Shop = () => {
           <div className='flex flex-col items-center justify-center'><UserBalance UserData={userData} /></div>
           
         </div>
-        <ShopCatalog />
+        <ShopCatalog  userData={userData}/>
       </main>
     </ThemeProvider>
   );
