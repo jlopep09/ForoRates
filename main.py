@@ -18,10 +18,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,  # ahora "*" sí es válido
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/db/structure")
 async def get_db_structure(db: Session = Depends(get_db)):
