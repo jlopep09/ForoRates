@@ -8,4 +8,5 @@ export const ENDPOINTS = {
   NOTIFICATIONS: `${API_BASE_URL}/notifications`,
   BENEFITS: `${API_BASE_URL}/benefits`,
   COMMENTS: `${API_BASE_URL}/comments`,
+  NEW_THREAD: `${API_BASE_URL}/newThread`,
 };
