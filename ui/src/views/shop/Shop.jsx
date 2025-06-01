@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar.jsx';
 import { ProfilePhoto } from '../../components/profile-components/ProfilePhoto.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import ProfileMainInfo from '../../components/profile-components/ProfileMainInfo.jsx';
-import { ProfileLinkSection } from '../../components/profile-components/ProfileLinkSection.jsx';
 import { Button, Paper } from '@mui/material';
 import { ENDPOINTS } from '../../../constants.js';
 import LoginButton from '../../components/SessionButtons/LoginButton.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
-import Thread from '../Thread.jsx';
 import { UserBalance } from './shop-components/UserBalance.jsx';
 import { ShopCatalog } from './shop-components/ShopCatalog.jsx';
 
