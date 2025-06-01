@@ -4,10 +4,9 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { ENDPOINTS } from '../../../constants';
+import { useAuth0 } from "@auth0/auth0-react"; // Asegúrate de importar esto si usas Auth0
 
 const formatRelativeTime = (dateString) => {
-
-
     const date = new Date(dateString);
     const now = new Date();
     const diff = Math.floor((now - date) / 1000);
@@ -27,20 +26,19 @@ const formatRelativeTime = (dateString) => {
 };
 
 export default function Comment({ comment, dbUser, threadId }) {
-
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
     const [showReplyBox, setShowReplyBox] = useState(false);
     const [replyContent, setReplyContent] = useState("");
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [errorReplies, setErrorReplies] = useState("");
+    const { loginWithRedirect } = useAuth0();
 
     const fetchReplies = async () => {
         setLoadingReplies(true);
         setErrorReplies("");
         try {
-            let comment_id = comment.id;
-            const res = await fetch(`${ENDPOINTS.COMMENTS}/replies?comment_id=${comment_id}`);
+            const res = await fetch(`${ENDPOINTS.COMMENTS}/replies?comment_id=${comment.id}`);
             if (!res.ok) throw new Error("Error al obtener respuestas");
             const data = await res.json();
             setReplies(data);
@@ -53,9 +51,7 @@ export default function Comment({ comment, dbUser, threadId }) {
     };
 
     const handleToggleReplies = () => {
-        if (!showReplies && replies.length === 0) {
-            fetchReplies();
-        }
+        if (!showReplies && replies.length === 0) fetchReplies();
         setShowReplies(!showReplies);
     };
 
@@ -81,14 +77,34 @@ export default function Comment({ comment, dbUser, threadId }) {
         }
     };
 
+    const handleReaction = async (type) => {
+        if (!dbUser) {
+            loginWithRedirect();
+            return;
+        }
+
+        try {
+            const res = await fetch(`${ENDPOINTS.COMMENTS}/${type}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    comment_id: comment.id,
+                    user_id: dbUser.id,
+                }),
+            });
+            if (!res.ok) {
+                const error = await res.json();
+                console.error(error.detail || "Error al registrar reacción");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <div className="bg-zinc-800 p-4 rounded-lg shadow-md mb-4">
             <div className="flex items-start gap-4">
-                <img
-                    src={comment.img_link}
-                    alt={comment.username}
-                    className="w-10 h-10 rounded-full"
-                />
+                <img src={comment.img_link} alt={comment.username} className="w-10 h-10 rounded-full" />
                 <div className="flex-1">
                     <div className="flex items-center justify-between">
                         <p className="font-semibold">{comment.username}</p>
@@ -96,9 +112,16 @@ export default function Comment({ comment, dbUser, threadId }) {
                     </div>
                     <p className="text-sm mt-1">{comment.content}</p>
                     <div className="flex gap-2 mt-2">
-                        <IconButton size="small"><ArrowUpwardIcon fontSize="small" /></IconButton>
-                        <IconButton size="small"><ArrowDownwardIcon fontSize="small" /></IconButton>
-                        <IconButton size="small" onClick={() => setShowReplyBox(!showReplyBox)}>
+                        <IconButton size="small" onClick={() => handleReaction("like")}>
+                            <ArrowUpwardIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton size="small" onClick={() => handleReaction("dislike")}>
+                            <ArrowDownwardIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton size="small" onClick={() => {
+                            if (!dbUser) loginWithRedirect();
+                            else setShowReplyBox(!showReplyBox);
+                        }}>
                             <ReplyIcon fontSize="small" />
                         </IconButton>
                         <Button
@@ -114,35 +137,26 @@ export default function Comment({ comment, dbUser, threadId }) {
 
                     {showReplyBox && (
                         <div className="mt-3 space-y-2">
-                            {!dbUser ? (
-                                <Button variant="outlined" onClick={() => loginWithRedirect()}>
-                                    Inicia sesión para responder
+                            <TextField
+                                fullWidth
+                                multiline
+                                minRows={2}
+                                variant="outlined"
+                                size="small"
+                                value={replyContent}
+                                onChange={(e) => setReplyContent(e.target.value)}
+                                placeholder="Escribe tu respuesta..."
+                            />
+                            <div className="flex gap-2">
+                                <Button variant="contained" size="small" onClick={handleReplySubmit}>
+                                    Enviar
                                 </Button>
-                            ) : (
-                                <>
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        minRows={2}
-                                        variant="outlined"
-                                        size="small"
-                                        value={replyContent}
-                                        onChange={(e) => setReplyContent(e.target.value)}
-                                        placeholder="Escribe tu respuesta..."
-                                    />
-                                    <div className="flex gap-2">
-                                        <Button variant="contained" size="small" onClick={handleReplySubmit}>
-                                            Enviar
-                                        </Button>
-                                        <Button variant="outlined" size="small" onClick={() => setShowReplyBox(false)}>
-                                            Cancelar
-                                        </Button>
-                                    </div>
-                                </>
-                            )}
+                                <Button variant="outlined" size="small" onClick={() => setShowReplyBox(false)}>
+                                    Cancelar
+                                </Button>
+                            </div>
                         </div>
                     )}
-
 
                     {showReplies && (
                         <div className="mt-4 pl-6 border-l border-zinc-700 space-y-4">
@@ -157,18 +171,13 @@ export default function Comment({ comment, dbUser, threadId }) {
                             ) : (
                                 replies.map((reply) => (
                                     <div key={reply.id} className="flex gap-3 text-sm bg-zinc-700 p-3 rounded">
-                                        <img
-                                            src={reply.img_link}
-                                            alt={reply.username}
-                                            className="w-8 h-8 rounded-full"
-                                        />
+                                        <img src={reply.img_link} alt={reply.username} className="w-8 h-8 rounded-full" />
                                         <div>
                                             <p className="font-semibold">{reply.username} <span className="text-xs text-gray-400">· {formatRelativeTime(reply.date)}</span></p>
                                             <p>{reply.content}</p>
                                         </div>
                                     </div>
                                 ))
-
                             )}
                         </div>
                     )}
