@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
-import Navbar from '../components/Navbar'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ENDPOINTS } from "../../constants";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress} from "@mui/material";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { IconButton, Typography } from "@mui/material";
-import { ArrowBackIos } from "@mui/icons-material";
+import {ArrowBackIos } from "@mui/icons-material";
+import AddCommentInThread from "../components/thread-components/AddCommentInThread";
+import CommentList from "../components/thread-components/CommentList";
 
 const darkTheme = createTheme({
   palette: {
@@ -34,7 +35,9 @@ const formatRelativeTime = (dateString) => {
 };
 
 
-export default function Thread({ id, onBack }) {
+export default function Thread({ id, onBack, dbUser }) {
+
+    console.log("::::::::db user:::::",dbUser);
 
     const thread_id = id;
 
@@ -133,8 +136,11 @@ export default function Thread({ id, onBack }) {
                         )}
                     </div>
 
+                    <AddCommentInThread dbUser={dbUser} threadId={thread?.id} />
+
                     <div className="p-4">
                         <p className="text-lg font-semibold">Comentarios</p>
+                        <CommentList threadId={thread.id} dbUser={dbUser} />
                     </div>
                 </div>
             )}

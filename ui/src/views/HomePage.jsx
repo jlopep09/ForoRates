@@ -320,7 +320,7 @@ export default function HomePage() {
     return (
         <>
             {selectedThread ? (
-                <Thread id={selectedThread} onBack={()=> setSelectedThread(null)}></Thread>
+                <Thread id={selectedThread} onBack={() => setSelectedThread(null)} dbUser={dbUser} />
             ) : (
             <div className="p-6 space-y-6">
                     <div className="flex flex-col items-center gap-4">
