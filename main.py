@@ -6,7 +6,7 @@ from routers.threads import router as router_threads
 from routers.ranking import router as router_ranking
 from routers.favorites import router as router_favorites
 from routers.notifications import router as router_notifications
-from routers.new_thread import router as router_new_thread
+from routers.newThread import router as router_new_thread
 from sqlalchemy.orm import Session
 from db import get_db, engine
 from routers.benefits import router as router_benefits

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Navbar from '../components/Navbar';
@@ -90,20 +90,20 @@ export const NewThread = () => {
         const dateISO = now.toISOString();
 
         //Crear una array de tags a partir de la cadena CSV
-        const tagsArray = tags
+        /*const tagsArray = tags
             .split(',')
             .map((t) => t.trim())
-            .filter((t) => t.length > 0);
+            .filter((t) => t.length > 0);*/
 
         //Payload que espera el backend
         const payload = {
             title: title,
             content: content,
             is_closed: false,//falso a la hora de crearlo
-            img_link: imgLink || null,
+            img_link: imgLink || "",
             user_id: userData.id,//Hay que pasarselo al nuevo componente como id del autor
             date: dateISO,
-            tags: tagsArray,//La lista de strings creada justo antes
+            tags: tags,//La lista de strings creada justo antes
             votes: votes// cero a la hora de crear
         };
 
@@ -125,8 +125,8 @@ export const NewThread = () => {
         const newThread = await res.json();
         console.log('Hilo creado: ', newThread);
   
-        //Redirigir a la vista del hilo recién creado, el cual ya tiene el id que le asigna la base de datos.
-        navigate(`/threads/${newThread.id}`);
+        //Redirigir a la página principal cuando el hilo se crea exitosamente
+        navigate(`/`);
       } catch (err) {
         console.error(err);
         alert(`No se pudo crear el hilo: ${err.message}`);

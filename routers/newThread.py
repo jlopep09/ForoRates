@@ -20,7 +20,7 @@ class NewThread(BaseModel):
     img_link: str = None
     user_id: int #Seguramente se quite
     date: datetime
-    tags: List[str] = []
+    tags: str
     votes: int = 0 #Al momento de crear el hilo vale cero
 
 #Lo que se le devuelve al cliente cuando el hilo se crea correctamente
@@ -32,7 +32,7 @@ class ThreadResponse(BaseModel):
     img_link: str = None
     user_id: int
     date: datetime
-    tags: List[str]
+    tags: str
     votes: int
 
 
@@ -54,14 +54,12 @@ def create_new_thread(
         )
 
     #Preparar los datos para insetar
-    #Convertir la lista de tags a un string separado por comas
-    tags_str = ",".join(threadToCreate.tags) if threadToCreate.tags else ""
-
     insert_stmt = text("""
         INSERT INTO "threads" ("title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes")
         VALUES (:title, :content, :is_closed, :img_link, :user_id, :date, :tags, :votes)
         RETURNING "id", "title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes"
     """)
+
 
     result = db.execute(
         insert_stmt,
@@ -72,7 +70,7 @@ def create_new_thread(
             "img_link": threadToCreate.img_link,
             "user_id": threadToCreate.user_id,
             "date": threadToCreate.date,
-            "tags": tags_str,
+            "tags": threadToCreate.tags,
             "votes": threadToCreate.votes
         }
     )
@@ -80,9 +78,6 @@ def create_new_thread(
     #Obtener la fila insertada(el returning)
     row = result.fetchone()
     db.commit()  #Confirmar la operación
-
-    #Transformar la cadena de tags de vuelta a una lista
-    tags_list = row[7].split(",") if row[7] else []
 
     return ThreadResponse(
         id=row[0],
@@ -92,6 +87,6 @@ def create_new_thread(
         img_link=row[4],
         user_id=row[5],
         date=row[6],
-        tags=tags_list,
+        tags=row[7],
         votes=row[8]
     )
