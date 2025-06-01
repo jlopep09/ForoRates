@@ -133,3 +133,47 @@ def list_comments(thread_id: int, db: Session = Depends(get_db)):
 
 
 
+@router.post("/comments/like")
+async def like_comment(request: Request, db: Session = Depends(get_db)):
+    try:
+        body = await request.json()
+        comment_id = body.get("comment_id")
+
+        if not comment_id:
+            raise HTTPException(status_code=400, detail="Falta el ID del comentario")
+
+        db.execute(
+            text('''
+                UPDATE comments
+                SET likes = COALESCE(likes, 0) + 1
+                WHERE id = :comment_id
+            '''), {"comment_id": comment_id}
+        )
+        db.commit()
+        return {"message": "Like añadido correctamente"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al dar like: {str(e)}")
+
+
+@router.post("/comments/dislike")
+async def dislike_comment(request: Request, db: Session = Depends(get_db)):
+    try:
+        body = await request.json()
+        comment_id = body.get("comment_id")
+
+        if not comment_id:
+            raise HTTPException(status_code=400, detail="Falta el ID del comentario")
+
+        db.execute(
+            text('''
+                UPDATE comments
+                SET dislikes = COALESCE(dislikes, 0) + 1
+                WHERE id = :comment_id
+            '''), {"comment_id": comment_id}
+        )
+        db.commit()
+        return {"message": "Dislike añadido correctamente"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al dar dislike: {str(e)}")
