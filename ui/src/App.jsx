@@ -17,7 +17,7 @@ export default function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Navbar/>
-      <main className='bg-stone-800'>
+      <main className='bg-neutral-800 text-white min-h-screen'>
         <div>
           <HomePage></HomePage>
         </div>

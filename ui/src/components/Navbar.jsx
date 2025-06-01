@@ -201,7 +201,6 @@ function UserMenu({ anchorEl, open, handleOpen, handleClose, dbUser }) {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <MenuItem onClick={handleClose}><NavLink to="/profile"><Button>Profile</Button></NavLink></MenuItem>
-        <MenuItem onClick={handleClose}><NavLink to="/settings"><Button>Settings</Button></NavLink></MenuItem>
         <MenuItem onClick={handleClose}><LogoutButton /></MenuItem>
       </Menu>
     </>
@@ -274,7 +273,7 @@ function Navbar() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" className='border-b-2 border-neutral-700'>
         <Toolbar disableGutters>
           <Logo />
           <MobileMenu
@@ -289,16 +288,19 @@ function Navbar() {
             <Box sx={{ display: 'flex', alignItems: 'center' }}><LoginButton /></Box>
           ) : (
             <>
-              <NotificationMenu
-                anchorEl={anchorElNotif}
-                open={Boolean(anchorElNotif)}
-                handleOpen={handleOpenNotif}
-                handleClose={handleCloseNotif}
-                notifications={notifications}
-                markAllAsRead={markAllAsRead}
-                deleteAllNotifications={deleteAllNotifications}
-              />
+              
               {dbUser && (
+               <>
+                <Button variant="contained"><NavLink to={"/newThread"}>New Thread</NavLink></Button>
+                <NotificationMenu
+                  anchorEl={anchorElNotif}
+                  open={Boolean(anchorElNotif)}
+                  handleOpen={handleOpenNotif}
+                  handleClose={handleCloseNotif}
+                  notifications={notifications}
+                  markAllAsRead={markAllAsRead}
+                  deleteAllNotifications={deleteAllNotifications}
+                />
                 <UserMenu
                   anchorEl={anchorElUser}
                   open={Boolean(anchorElUser)}
@@ -306,6 +308,7 @@ function Navbar() {
                   handleClose={handleCloseUser}
                   dbUser={dbUser}
                 />
+              </>
               )}
 
             </>
