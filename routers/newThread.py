@@ -18,7 +18,7 @@ class NewThread(BaseModel):
     content: str
     is_closed: bool = False #Valor por defecto
     img_link: str = None
-    user_id: int
+    user_id: int #Seguramente se quite
     date: datetime
     tags: List[str] = []
     votes: int = 0 #Al momento de crear el hilo vale cero
@@ -38,7 +38,6 @@ class ThreadResponse(BaseModel):
 
 @router.post("/newThread/", response_model=ThreadResponse, status_code=status.HTTP_201_CREATED)
 def create_new_thread(
-    user_id: int,
     threadToCreate: NewThread,
     db: Session = Depends(get_db)
 ):
