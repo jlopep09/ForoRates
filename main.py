@@ -10,6 +10,7 @@ from routers.comments import router as router_comments
 from sqlalchemy.orm import Session
 from db import get_db, engine
 from routers.benefits import router as router_benefits
+from routers.newThread import router as router_new_thread
 
 app = FastAPI()
 
