@@ -184,13 +184,13 @@ export const NewThread = () => {
 
     //Aquí se llega cuando el userData.id está disponible
     return (
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={darkTheme} >
             {/* Para los estilos basicos */}
             <CssBaseline /> 
 
             <Navbar />
 
-            <Container maxWidth="sm" sx={{ mt: 4 }}> {/*mt es margin-top */}
+            <Container maxWidth="sm" sx={{ mt: 4 }} > {/*mt es margin-top */}
                 <Typography variant="h4" gutterBottom>
                     Crear nuevo hilo
                     {/* Meter dentro de typography para tipografia consistente
