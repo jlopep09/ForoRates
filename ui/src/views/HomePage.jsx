@@ -244,7 +244,11 @@ export default function HomePage() {
                             userMap[userId] = {
                                 username: userData[0].username,
                                 img_link: userData[0].img_link
+                                , email: userData[0].email,
+                                user_id: userData[0].user_id
+
                             };
+                            
                         }
                     }
                 }));
@@ -256,7 +260,9 @@ export default function HomePage() {
                     user: userMap[thread.user_id]?.username || `usuario_${thread.user_id}`,
                     time: formatRelativeTime(thread.date),
                     photo: userMap[thread.user_id]?.img_link || "",
-                    tags: thread.tags || []
+                    tags: thread.tags || [],
+                    user_email: userMap[thread.user_id]?.email || "",
+                    user_id: thread.user_id
                 }));
 
                 setPosts(sortPosts(mappedPosts));
