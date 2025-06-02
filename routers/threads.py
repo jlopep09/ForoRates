@@ -1,15 +1,37 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+import datetime
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from db import get_db
+from datetime import datetime
 
 router = APIRouter()
+
+
+# --------------------------------------------
+# MODELOS
+# --------------------------------------------
 
 class VoteUpdate(BaseModel):
     thread_id: int
     direction: str  # "up" o "down"
+
+class ThreadInDB(BaseModel):
+    id: int
+    title: str
+    content: str
+    is_closed: bool
+    img_link: Optional[str]
+    user_id: int
+    date: datetime
+    tags: str
+    votes: int
+
+# ----------------------------
+# GETs
+# ----------------------------
 
 @router.get("/threads/count")
 async def count_threads(
@@ -92,10 +114,24 @@ async def list_threads(
 @router.get("/threads/user/{user_id}")
 async def get_threads(user_id: int, db: Session = Depends(get_db)):
     result = db.execute(
-        text('SELECT "id", "title", "content", "img_link" FROM "threads" WHERE "user_id" = :user_id'),
+        text('''SELECT "id", "title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes"
+             FROM "threads" WHERE "user_id" = :user_id
+             ORDER BY "date" DESC'''),
         {"user_id": user_id}
     )
-    threads = [{"id": row[0], "title": row[1], "content": row[2], "img_link": row[3]} for row in result]
+    threads = [
+        {
+            "id": row[0],
+            "title": row[1],
+            "content": row[2],
+            "is_closed": row[3],
+            "img_link": row[4],
+            "user_id": row[5],
+            "date": row[6],
+            "tags": row[7],
+            "votes": row[8],
+            } for row in result
+    ]
     return threads
 
 @router.get("/threads/by_ids")
@@ -136,6 +172,10 @@ async def get_threads(thread_id: int, db: Session = Depends(get_db)):
     thread = [{"id": row[0], "title": row[1], "content": row[2], "is_closed": row[3], "img_link": row[4], "user_id": row[5], "date": row[6], "tags": row[7], "votes": row[8]} for row in result]
     return thread
 
+# ----------------------------
+# POST 
+# ----------------------------
+
 @router.post("/threads/updateLike")
 async def update_like(vote: VoteUpdate, db: Session = Depends(get_db)):
     if vote.direction not in ("up", "down"):
@@ -158,3 +198,51 @@ async def update_like(vote: VoteUpdate, db: Session = Depends(get_db)):
 
     db.commit()
     return {"votes": updated[0]}
+
+# ----------------------------
+# PATCH 
+# ----------------------------
+
+@router.patch("/threads/{thread_id}/close", response_model=ThreadInDB, status_code=status.HTTP_200_OK)
+def close_thread(thread_id: int, db: Session = Depends(get_db)):
+    #print(f">>> close_thread invokes with id= {thread_id}")
+    row = db.execute(
+        text('''SELECT "id", "title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes"
+            FROM "threads"
+            WHERE "id" = :thread_id'''),
+        {"thread_id": thread_id}
+    ).fetchone()
+
+    #Caso de que el hilo no exista
+    if not row:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hilo no encontrado")
+    
+    #Caso de que el hilo ya esté cerrado
+    if row[3]:#row[3] es is_closed
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El hilo ya está cerrado")
+    
+    #Actualizar is_closed a true
+    updated = db.execute(
+        text('''UPDATE "threads"
+            SET is_closed = true
+            WHERE id = :thread_id
+            RETURNING 
+                "id", "title", "content", "is_closed", "img_link",
+                "user_id", "date", "tags", "votes"
+            '''),
+            {"thread_id": thread_id}
+    ).fetchone()
+
+    db.commit()
+
+    return ThreadInDB(
+        id=updated[0],
+        title=updated[1],
+        content=updated[2],
+        is_closed=updated[3],
+        img_link=updated[4],
+        user_id=updated[5],
+        date=updated[6],
+        tags=updated[7],
+        votes=updated[8]
+    )
