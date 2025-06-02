@@ -52,15 +52,27 @@ export default function Thread({ id, onBack, dbUser }) {
             try {
                 const params = new URLSearchParams();
                 const response = await fetch(`${ENDPOINTS.THREADS}/${thread_id}`);
+
                 if (!response.ok) throw new Error("Error al obtener el hilo");
+
                 const data = await response.json();
-                setThread(data[0]);
-                setVotes(data[0].votes)
-                console.log(data[0])
-                const responseUser = await fetch(`${ENDPOINTS.USERS}/${data[0].user_id}`);
-                if (!responseUser.ok) throw new Error("Error al obtener autor del hilo");
+
+                const threadData = Array.isArray(data) ? data[0] : data;
+                if(!threadData) {
+                    throw new Error("Hilo no encontrado en la respuesta");
+                }
+
+                setThread(threadData)//setThread(data[0]);
+                setVotes(threadData.votes)//setVotes(data[0].votes)
+                console.log(data)//console.log(data)[0]
+
+                const responseUser = await fetch(`${ENDPOINTS.USERS}/${threadData.user_id}`);
+                if(!responseUser.ok) throw new Error("Error al obtener autor del hilo");
+
                 const dataUser = await responseUser.json();
-                setUser(dataUser[0])
+                const userData = Array.isArray(dataUser) ? dataUser[0] : dataUser;
+                setUser(userData);
+
                 setLoading(false);
             } catch (error) {
                 console.error(error);
@@ -136,7 +148,7 @@ export default function Thread({ id, onBack, dbUser }) {
                         )}
                     </div>
 
-                    <AddCommentInThread dbUser={dbUser} threadId={thread?.id} />
+                    <AddCommentInThread dbUser={dbUser} threadId={thread?.id} isClosed={thread?.is_closed} />
 
                     <div className="p-4">
                         <p className="text-lg font-semibold">Comentarios</p>
