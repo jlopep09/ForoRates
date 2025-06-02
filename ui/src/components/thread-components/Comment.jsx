@@ -102,15 +102,15 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
     };
 
     return (
-        <div className="bg-zinc-800 p-4 rounded-lg shadow-md mb-4">
+        <div className="bg-neutral-800 border border-neutral-400 p-4 rounded-lg shadow-md mb-4">
             <div className="flex items-start gap-4">
                 <img src={comment.img_link} alt={comment.username} className="w-10 h-10 rounded-full" />
                 <div className="flex-1">
                     <div className="flex items-center justify-between">
                         <p className="font-semibold">{comment.username}</p>
-                        <p className="text-sm text-gray-400">{formatRelativeTime(comment.date)}</p>
+                        <p className="text-sm text-gray-300">{formatRelativeTime(comment.date)}</p>
                     </div>
-                    <p className="text-sm mt-1">{comment.content}</p>
+                    <p className="text-sm m-1 text-left"><span className="mr-2 text-neutral-500">|</span>{comment.content}</p>
                     <div className="flex gap-2 mt-2">
                         <IconButton size="small" onClick={() => handleReaction("like")}>
                             <ArrowUpwardIcon fontSize="small" />
@@ -173,13 +173,13 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
                             ) : errorReplies ? (
                                 <div className="text-red-500 text-sm">{errorReplies}</div>
                             ) : replies.length === 0 ? (
-                                <div className="text-gray-400 text-sm">No hay respuestas aún.</div>
+                                <div className=" text-center text-gray-300 text-sm">No hay respuestas aún.</div>
                             ) : (
                                 replies.map((reply) => (
                                     <div key={reply.id} className="flex gap-3 text-sm bg-zinc-700 p-3 rounded">
                                         <img src={reply.img_link} alt={reply.username} className="w-8 h-8 rounded-full" />
                                         <div>
-                                            <p className="font-semibold">{reply.username} <span className="text-xs text-gray-400">· {formatRelativeTime(reply.date)}</span></p>
+                                            <p className="font-semibold ">{reply.username} <span className="text-xs text-gray-400">· {formatRelativeTime(reply.date)}</span></p>
                                             <p>{reply.content}</p>
                                         </div>
                                     </div>
