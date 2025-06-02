@@ -205,6 +205,7 @@ async def update_like(vote: VoteUpdate, db: Session = Depends(get_db)):
 
 @router.patch("/threads/{thread_id}/close", response_model=ThreadInDB, status_code=status.HTTP_200_OK)
 def close_thread(thread_id: int, db: Session = Depends(get_db)):
+    #print(f">>> close_thread invokes with id= {thread_id}")
     row = db.execute(
         text('''SELECT "id", "title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes"
             FROM "threads"
@@ -229,7 +230,7 @@ def close_thread(thread_id: int, db: Session = Depends(get_db)):
                 "id", "title", "content", "is_closed", "img_link",
                 "user_id", "date", "tags", "votes"
             '''),
-            {thread_id: thread_id}
+            {"thread_id": thread_id}
     ).fetchone()
 
     db.commit()

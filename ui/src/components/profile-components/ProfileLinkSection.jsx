@@ -87,7 +87,7 @@ export const ProfileLinkSection = ({ UserID, onThreadSelect }) => {
 };
 
 //El onClick se mueve de la Card al Cardcontent para que el botón de cerrar no abra la vista del hilo
-const MiniThreadCard = ({ thread, onClick }) => {
+const MiniThreadCard = ({ thread, onClick, onClose }) => {
   return (
     <Card className="cursor-pointer max-w-xs hover:shadow-lg transition"
     sx={{
