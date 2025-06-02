@@ -148,10 +148,12 @@ export default function Thread({ id, onBack, dbUser }) {
                         )}
                     </div>
 
-                    <AddCommentInThread dbUser={dbUser} threadId={thread?.id} isClosed={thread?.is_closed} />
 
-                    <div className="p-4">
-                        <p className="text-lg font-semibold">Comentarios</p>
+
+                    <div className="flex flex-col gap-4 p-2">
+                        
+                        <p className="text-lg font-semibold text-center mb-0">Comentarios</p>
+                        <AddCommentInThread dbUser={dbUser} threadId={thread?.id} isClosed={thread?.is_closed} />
                         <CommentList threadId={thread.id} dbUser={dbUser} />
                     </div>
                 </div>
