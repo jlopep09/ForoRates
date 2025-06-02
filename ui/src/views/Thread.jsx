@@ -152,7 +152,7 @@ export default function Thread({ id, onBack, dbUser }) {
 
                     <div className="p-4">
                         <p className="text-lg font-semibold">Comentarios</p>
-                        <CommentList threadId={thread.id} dbUser={dbUser} />
+                        <CommentList threadId={thread.id} dbUser={dbUser} isClosed={thread.is_closed} />
                     </div>
                 </div>
             )}

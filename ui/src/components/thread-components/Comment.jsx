@@ -25,7 +25,7 @@ const formatRelativeTime = (dateString) => {
     return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
 };
 
-export default function Comment({ comment, dbUser, threadId }) {
+export default function Comment({ comment, dbUser, threadId, isClosed }) {
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
     const [showReplyBox, setShowReplyBox] = useState(false);
@@ -119,9 +119,15 @@ export default function Comment({ comment, dbUser, threadId }) {
                             <ArrowDownwardIcon fontSize="small" />
                         </IconButton>
                         <IconButton size="small" onClick={() => {
-                            if (!dbUser) loginWithRedirect();
-                            else setShowReplyBox(!showReplyBox);
-                        }}>
+                                if(!dbUser) {
+                                    loginWithRedirect();
+                                } else if(!isClosed) {
+                                    setShowReplyBox(!showReplyBox);
+                                }
+                            }}
+                            disabled={isClosed}
+                            title={isClosed ? "El hilo está cerrado" : "Responder"}
+                        >
                             <ReplyIcon fontSize="small" />
                         </IconButton>
                         <Button

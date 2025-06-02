@@ -3,7 +3,7 @@ import { ENDPOINTS } from "../../../constants";
 import Comment from "./Comment";
 import { CircularProgress } from "@mui/material";
 
-export default function CommentList({ threadId, dbUser }) {
+export default function CommentList({ threadId, dbUser, isClosed }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ export default function CommentList({ threadId, dbUser }) {
     return (
         <div className="space-y-4">
             {comments.map(comment => (
-                <Comment key={comment.id} comment={comment} dbUser={dbUser} threadId={threadId} />
+                <Comment key={comment.id} comment={comment} dbUser={dbUser} threadId={threadId} isClosed={isClosed} />
 
             ))}
         </div>
