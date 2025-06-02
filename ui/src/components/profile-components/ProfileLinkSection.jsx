@@ -40,12 +40,13 @@ export const ProfileLinkSection = ({ UserID, onThreadSelect }) => {
 
   //Manejador para el botón de cerrar hilo
   const handleCloseThread = async (threadId, index) => {
+    //Comprobar si ya está cerrado.
     if(threads[index].is_closed) {
       alert('Este hilo ya está cerrado.');
       return;
     }
 
-    try {
+    try{
       const res = await fetch(`${ENDPOINTS.THREADS}/${threadId}/close`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' }
@@ -62,21 +63,22 @@ export const ProfileLinkSection = ({ UserID, onThreadSelect }) => {
         copy[index] = updatedThread;
         return copy;
       });
-    } catch (err) {
+    } catch(err) {
       console.error(err);
       alert(`No se pudo cerrar el hilo: ${err.message}`);
     }
   };
 
-
+  //idx es la posición dentro del subarray de 4 hilos
   return (
     <div className='flex flex-row gap-3 justify-center items-center'>
       <Button onClick={handlePrev} disabled={currentIndex === 0}>Prev</Button>
-      {threads.slice(currentIndex, currentIndex + 4).map(thread => (
+      {threads.slice(currentIndex, currentIndex + 4).map((thread, idx) => (
         <MiniThreadCard
           key={thread.id}
           thread={thread}
           onClick={() => onThreadSelect(thread.id)}
+          onClose={() => handleCloseThread(thread.id, currentIndex + idx)}
         />
       ))}
       <Button onClick={handleNext} disabled={currentIndex + 4 >= threads.length}>Next</Button>
@@ -84,9 +86,16 @@ export const ProfileLinkSection = ({ UserID, onThreadSelect }) => {
   );
 };
 
+//El onClick se mueve de la Card al Cardcontent para que el botón de cerrar no abra la vista del hilo
 const MiniThreadCard = ({ thread, onClick }) => {
   return (
-    <Card onClick={onClick} className="cursor-pointer max-w-xs hover:shadow-lg transition">
+    <Card className="cursor-pointer max-w-xs hover:shadow-lg transition"
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between'
+    }}
+    >
       {thread.img_link && (
         <CardMedia
           component="img"
@@ -95,7 +104,7 @@ const MiniThreadCard = ({ thread, onClick }) => {
           alt="thread thumbnail"
         />
       )}
-      <CardContent>
+      <CardContent onClick={onClick}>
         <Typography gutterBottom variant="h6" component="div">
           {thread.title}
         </Typography>
@@ -103,6 +112,26 @@ const MiniThreadCard = ({ thread, onClick }) => {
           {thread.content.slice(0, 50)}...
         </Typography>
       </CardContent>
+
+      <CardActions sx={{ justifyContent: 'space-between', px: 2, py: 1 }}>
+        {thread.is_closed ? (
+          <Button variant="outlined" color="secondary" size="small" disabled>
+            Cerrado
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+          >
+            Cerrar hilo
+          </Button>
+        )}
+      </CardActions>
     </Card>
   );
 };
