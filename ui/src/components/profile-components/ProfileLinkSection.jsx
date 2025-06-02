@@ -38,6 +38,37 @@ export const ProfileLinkSection = ({ UserID, onThreadSelect }) => {
     setCurrentIndex((prevIndex) => Math.min(prevIndex + 4, threads.length - 4));
   };
 
+  //Manejador para el botón de cerrar hilo
+  const handleCloseThread = async (threadId, index) => {
+    if(threads[index].is_closed) {
+      alert('Este hilo ya está cerrado.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${ENDPOINTS.THREADS}/${threadId}/close`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if(!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.detail || 'Error cerrando el hilo');
+      }
+
+      const updatedThread = await res.json();
+      setThreads(prev => {
+        const copy = [...prev];
+        copy[index] = updatedThread;
+        return copy;
+      });
+    } catch (err) {
+      console.error(err);
+      alert(`No se pudo cerrar el hilo: ${err.message}`);
+    }
+  };
+
+
   return (
     <div className='flex flex-row gap-3 justify-center items-center'>
       <Button onClick={handlePrev} disabled={currentIndex === 0}>Prev</Button>
