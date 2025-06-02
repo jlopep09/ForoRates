@@ -172,6 +172,10 @@ async def get_threads(thread_id: int, db: Session = Depends(get_db)):
     thread = [{"id": row[0], "title": row[1], "content": row[2], "is_closed": row[3], "img_link": row[4], "user_id": row[5], "date": row[6], "tags": row[7], "votes": row[8]} for row in result]
     return thread
 
+# ----------------------------
+# POST 
+# ----------------------------
+
 @router.post("/threads/updateLike")
 async def update_like(vote: VoteUpdate, db: Session = Depends(get_db)):
     if vote.direction not in ("up", "down"):
@@ -194,3 +198,50 @@ async def update_like(vote: VoteUpdate, db: Session = Depends(get_db)):
 
     db.commit()
     return {"votes": updated[0]}
+
+# ----------------------------
+# PATCH 
+# ----------------------------
+
+@router.patch("/threads/{thread_id}/close", response_model=ThreadInDB, status_code=status.HTTP_200_OK)
+def close_thread(thread_id: int, db: Session = Depends(get_db)):
+    row = db.execute(
+        text('''SELECT "id", "title", "content", "is_closed", "img_link", "user_id", "date", "tags", "votes"
+            FROM "threads"
+            WHERE "id" = :thread_id'''),
+        {"thread_id": thread_id}
+    ).fetchone()
+
+    #Caso de que el hilo no exista
+    if not row:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hilo no encontrado")
+    
+    #Caso de que el hilo ya esté cerrado
+    if row[3]:#row[3] es is_closed
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El hilo ya está cerrado")
+    
+    #Actualizar is_closed a true
+    updated = db.execute(
+        text('''UPDATE "threads"
+            SET is_closed = true
+            WHERE id = :thread_id
+            RETURNING 
+                "id", "title", "content", "is_closed", "img_link",
+                "user_id", "date", "tags", "votes"
+            '''),
+            {thread_id: thread_id}
+    ).fetchone()
+
+    db.commit()
+
+    return ThreadInDB(
+        id=updated[0],
+        title=updated[1],
+        content=updated[2],
+        is_closed=updated[3],
+        img_link=updated[4],
+        user_id=updated[5],
+        date=updated[6],
+        tags=updated[7],
+        votes=updated[8]
+    )
