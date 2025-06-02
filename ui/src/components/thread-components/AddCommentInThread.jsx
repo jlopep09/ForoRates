@@ -1,16 +1,32 @@
 import { useState } from 'react';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { ENDPOINTS } from '../../../constants';
 import { useAuth0 } from '@auth0/auth0-react';
 
 
-const AddCommentInThread = ({ dbUser, threadId }) => {
+const AddCommentInThread = ({ dbUser, threadId, isClosed }) => {
 
-
+  console.log("El id del thread es ", threadId, " y su valor de is_closed es ", isClosed);
   const { loginWithRedirect } = useAuth0();
 
-  let userId = undefined;
+  //Comprobación de hilo cerrado
+  if (isClosed) {
+    return (
+      <Typography
+        sx={{
+          color: 'gray',
+          fontStyle: 'italic',
+          mt: 2,
+          textAlign: 'center'
+        }}
+      >
+        Este hilo está cerrado y no se pueden añadir comentarios.
+      </Typography>
+    );
+  }
 
+  let userId = undefined;
+  //Comprobación de usuario no identificado
   if (dbUser == undefined) {
     return (
       <Button variant="outlined" onClick={() => loginWithRedirect()}>
