@@ -58,7 +58,7 @@ const AddCommentInThread = ({ dbUser, threadId }) => {
 
 
   return (
-    <div>
+    <div className='border border-gray-400 p-2 rounded-md mt-4'>
       <TextField
         id="standard-basic"
         label="Escribe un comentario..."
