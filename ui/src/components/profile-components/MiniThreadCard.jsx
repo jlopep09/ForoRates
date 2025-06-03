@@ -4,8 +4,9 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CloseThreadButton from '../thread-components/CloseThreadButton';
+import DeleteThreadButton from '../thread-components/DeleteThreadButton';
 
-const MiniThreadCard = ({ thread, onClick, onClose }) => {
+const MiniThreadCard = ({ thread, onClick, onClose, onDelete }) => {
   return (
     <Card
       className="cursor-pointer max-w-xs hover:shadow-lg transition"
@@ -29,8 +30,9 @@ const MiniThreadCard = ({ thread, onClick, onClose }) => {
           {thread.content.slice(0, 50)}...
         </Typography>
       </CardContent>
-      {/* El botón de cerrar hilo, llama a onClose() */}
+      {/* El botón de cerrar hilo, llama a onClose() y el de eliminar hilo llama a onDelete() */}
       <CloseThreadButton thread={thread} onClose={onClose} />
+      <DeleteThreadButton thread={thread} onDelete={onDelete} />
     </Card>
   );
 };

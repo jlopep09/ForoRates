@@ -7,7 +7,8 @@ export const ProfileLinkSection = ({
   currentIndex,
   setCurrentIndex,
   onThreadSelect,   // ahora esperamos (threadId, indexReal)
-  onCloseThread     // idem: (threadId, indexReal)
+  onCloseThread,    // idem: (threadId, indexReal)
+  onDeleteThread
 }) => {
   const handlePrev = () => {
     setCurrentIndex(prevIndex => Math.max(prevIndex - 4, 0));
@@ -28,6 +29,7 @@ export const ProfileLinkSection = ({
             thread={thread}
             onClick={() => onThreadSelect(thread.id, indexReal)}
             onClose={() => onCloseThread(thread.id, indexReal)}
+            onDelete={() => onDeleteThread(thread.id, indexReal)}
           />
         );
       })}
