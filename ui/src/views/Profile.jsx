@@ -68,6 +68,36 @@ export const Profile = () => {
     }
   };
 
+
+  //Handler para eliminar un hilo: llama al endpoint DELETE y actualiza el array
+  const handleDeleteThread = async (threadId, index) => {
+    if(typeof index !== 'number' || index < 0 || index >= threads.length) {
+      console.warn('Índice inválido para eliminar el hilo:', index);
+      return;
+    }
+
+    //Confirmación
+    const confirmar = window.confirm('¿Seguro que deseas eliminar este hilo?');
+    if(!confirmar) return;
+
+    try {
+      const res = await fetch(`${ENDPOINTS.THREADS}/${threadId}`, {
+        method: 'DELETE',
+      });
+
+      if(res.status === 204) {
+        //Borrado exitoso: removemos del array
+        setThreads(prev => prev.filter((_, i) => i !== index));
+      } else {
+        const errJson = await res.json();
+        throw new Error(errJson.detail || 'Error al eliminar el hilo');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(`No se pudo eliminar el hilo: ${err.message}`);
+    }
+  };
+
   // Handler para seleccionar un hilo (nos llega desde el hijo los dos valores)
   const handleSelectThread = (threadId, indexReal) => {
     setSelectedThreadId(threadId);
@@ -179,6 +209,7 @@ export const Profile = () => {
             setCurrentIndex={setCurrentIndex}
             onThreadSelect={handleSelectThread}   // <— enviamos la función que recibe (threadId, indexReal)
             onCloseThread={handleCloseThread}
+            onDeleteThread={handleDeleteThread}
           />
         </div>
       </main>
