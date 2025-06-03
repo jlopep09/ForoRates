@@ -246,3 +246,35 @@ def close_thread(thread_id: int, db: Session = Depends(get_db)):
         tags=updated[7],
         votes=updated[8]
     )
+
+
+# ----------------------------
+# DELETE
+# ----------------------------
+@router.delete(
+    "/threads/{thread_id}",
+    status_code=204  #204 Sin contenido al eliminar correctamente
+)
+def delete_thread(
+    thread_id: int,
+    db: Session = Depends(get_db)
+):
+    #Ver que el hilo existe
+    row = db.execute(
+        text('SELECT id FROM "threads" WHERE id = :thread_id'),
+        {"thread_id": thread_id}
+    ).fetchone()
+
+    if not row:
+        #404 en caso de que el hilo no exista
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hilo no encontrado")
+
+    #Borrar el hilo
+    db.execute(
+        text('DELETE FROM "threads" WHERE id = :thread_id'),
+        {"thread_id": thread_id}
+    )
+    db.commit()
+
+    #Devolver el 204 sin contenido
+    return
