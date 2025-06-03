@@ -6,9 +6,11 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { IconButton, Typography } from "@mui/material";
 import { ArrowBackIos } from "@mui/icons-material";
+import { useNavigate } from "react-router";
 import AddCommentInThread from "../components/thread-components/AddCommentInThread";
 import CommentList from "../components/thread-components/CommentList";
 import CloseThreadButton from "../components/thread-components/CloseThreadButton";
+import DeleteThreadButton from "../components/thread-components/DeleteThreadButton";
 
 const darkTheme = createTheme({
   palette: {
@@ -35,12 +37,13 @@ const formatRelativeTime = (dateString) => {
   return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
 };
 
-export default function Thread({ id, index, onBack, dbUser, handleCloseThread }) {
+export default function Thread({ id, index, onBack, dbUser, handleCloseThread, handleDeleteThread }) {
   const thread_id = id;
   const [thread, setThread] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [votes, setVotes] = useState(0);
+  const navigate = useNavigate();
 
   // 1) Extraemos fetchThread como useCallback para poder invocarlo desde cualquier sitio.
   const fetchThread = useCallback(async () => {
@@ -94,6 +97,15 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread })
     await fetchThread();
   };
 
+  // 4) Método que cierra el hilo y luego vuelve a la pagina principal
+  const borrarEsteHilo = async () => {
+    const confirmar = window.confirm('¿Seguro que quieres eliminar este hilo?');
+    if(!confirmar) return;
+
+    await handleDeleteThread(id, index);
+    navigate('/');
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       {loading ? (
@@ -118,13 +130,14 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread })
               </div>
             </div>
 
-            {/* Mostrar el botón de cerrar solo si es el autor o un admin */}
-            
-
+            {/* Mostrar los botones de cerrar y eliminar solo si es el autor o un admin */}
             <div className="flex items-center gap-1">
                 
             {(dbUser?.id === thread?.user_id || dbUser?.is_admin) && (
-                <CloseThreadButton thread={thread} onClose={cerrarEsteHilo} />
+                <>
+                  <CloseThreadButton thread={thread} onClose={cerrarEsteHilo} />
+                  <DeleteThreadButton thread={thread} onDelete={borrarEsteHilo} />
+                </>
             )}
             {console.log(dbUser)}
               <IconButton onClick={() => handleVote(thread.id, "up")} size="small">
