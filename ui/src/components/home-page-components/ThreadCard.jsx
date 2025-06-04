@@ -144,10 +144,12 @@ export default function ThreadCard({ post, onVote, onClick, user, isAuthenticate
                     {post.title}
                 </Typography>
             </div>
-
-            <IconButton className="ml-4 mt-1" onClick={toggleFavs}>
-                {liked ? <FavoriteIcon sx={{ color: "white" }} /> : <FavoriteBorderIcon />}
-            </IconButton>
+            {isAuthenticated&&(
+                <IconButton className="ml-4 mt-1" onClick={toggleFavs}>
+                    {liked ? <FavoriteIcon sx={{ color: "white" }} /> : <FavoriteBorderIcon />}
+                </IconButton>
+            )}
+            
         </Card>
     );
 }

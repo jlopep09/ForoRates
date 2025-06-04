@@ -18,7 +18,7 @@ const MiniThreadCard = ({ thread, onClick, onClose, onDelete }) => {
         height="140"
         image={
           thread.img_link ||
-          "https://cdn.shortpixel.ai/spai/q_lossless+w_1082+to_auto+ret_img/independent-photo.com/wp-content/uploads/2022/02/Yifeng-Ding-scaled.jpeg"
+          "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         }
         alt="thread thumbnail"
       />

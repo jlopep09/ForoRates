@@ -10,7 +10,7 @@ function ProfileMainInfo({ userData }) {
     <div className="flex flex-col justify-center items-center h-full w-full my-3">
       <p>{userData.fullname}</p>
       <p>@{userData.username}</p>
-      <p>Score: {userData.score}</p>
+      <p>Puntos: {userData.score}</p>
       <div className="flex justify-center items-center h-full w-full my-3 gap-x-2">
         <UserInfoForm userData={userData}/>
       </div>
