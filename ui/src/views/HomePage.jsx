@@ -368,6 +368,7 @@ export default function HomePage() {
               onBack={() => setSelectedThread(null)}
               dbUser={dbUser}
               handleCloseThread={handleCloseThread}
+              user_thread_id={posts[selIndex].user_id}
             />
           );
         })()
