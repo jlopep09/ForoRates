@@ -70,7 +70,6 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread, h
 
   const handleToggleBan = async () => {
     if (!user) return;
-
     const endpoint = `${ENDPOINTS.USERS}/${user_thread_id}/toggle-ban`;
 
 
@@ -184,10 +183,13 @@ const fetchThread = useCallback(async () => {
 
             {/* Mostrar los botones de cerrar y eliminar solo si es el autor o un admin */}
             <div className="flex items-center gap-1">
-                
+            {( dbUser?.is_admin) && (
+              <>
+                <BanUserButton user={user} onToggleBan={handleToggleBan} />
+              </>
+            )}  
             {(dbUser?.id === thread?.user_id || dbUser?.is_admin) && (
                 <>
-                  <BanUserButton user={user} onToggleBan={handleToggleBan} />
                   <CloseThreadButton thread={thread} onClose={cerrarEsteHilo} />
                   <DeleteThreadButton thread={thread} onDelete={borrarEsteHilo} />
                 </>
@@ -219,12 +221,18 @@ const fetchThread = useCallback(async () => {
 
           <div className="flex flex-col gap-4 p-2">
             <p className="text-lg font-semibold text-center mb-0">Comentarios</p>
-            <AddCommentInThread
-              dbUser={dbUser}
-              threadId={thread.id}
-              isClosed={thread.is_closed}
-              onCommentAdded={onNuevaPublicacion}
-            />
+            
+            {dbUser.is_banned == false &&(
+              
+              <AddCommentInThread
+                dbUser={dbUser}
+                threadId={thread.id}
+                isClosed={thread.is_closed}
+                onCommentAdded={onNuevaPublicacion}
+              />
+
+            )}
+            
             <CommentList
               threadId={thread.id}
               dbUser={dbUser}

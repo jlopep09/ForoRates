@@ -153,7 +153,7 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
                         </Button>
                     </div>
 
-                    {showReplyBox && (
+                    {(showReplyBox && !dbUser.is_banned) && (
                         <div className="mt-3 space-y-2">
                             <TextField
                                 fullWidth

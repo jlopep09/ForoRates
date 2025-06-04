@@ -6,7 +6,8 @@ import React from "react";
 function BanUserButton({ user, onToggleBan }) {
   return (
     <CardActions sx={{ justifyContent: "space-between", px: 2, py: 1 }}>
-      <div className="flex items-center gap-2 cursor-pointer" onClick={(e) => { e.stopPropagation(); onToggleBan(); }}>
+
+      <div className="flex items-center gap-2 cursor-pointer border-1 border-white/20 rounded-md justify-center align-middle pr-2" onClick={(e) => { e.stopPropagation(); onToggleBan(); }}>
         <Tooltip title={user.is_banned ? "Desbanear usuario" : "Banear usuario"}>
           <IconButton
             color={user.is_banned ? "secondary" : "error"}
