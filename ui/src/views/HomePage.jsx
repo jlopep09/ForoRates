@@ -403,6 +403,7 @@ export default function HomePage() {
               dbUser={dbUser}
               handleCloseThread={handleCloseThread}
               handleDeleteThread={handleDeleteThread}
+              user_thread_id={posts[selIndex].user_id}
             />
           );
         })()

@@ -11,12 +11,27 @@ import AddCommentInThread from "../components/thread-components/AddCommentInThre
 import CommentList from "../components/thread-components/CommentList";
 import CloseThreadButton from "../components/thread-components/CloseThreadButton";
 import DeleteThreadButton from "../components/thread-components/DeleteThreadButton";
+import BanUserButton from "../components/thread-components/BanUserButton";
+
 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
 });
+
+const fetchIsBannedStatus = async (userId) => {
+  try {
+    const response = await fetch(`${ENDPOINTS.USERS}/is_banned/${userId}`);
+    if (!response.ok) throw new Error("Error al obtener estado de baneo");
+    const isBanned = await response.json(); // true o false
+    return isBanned;
+  } catch (err) {
+    console.error("Error obteniendo estado de baneo:", err);
+    return false; // fallback por defecto
+  }
+};
+
 
 const formatRelativeTime = (dateString) => {
   const date = new Date(dateString);
@@ -37,7 +52,7 @@ const formatRelativeTime = (dateString) => {
   return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
 };
 
-export default function Thread({ id, index, onBack, dbUser, handleCloseThread, handleDeleteThread }) {
+export default function Thread({ id, index, onBack, dbUser, handleCloseThread, handleDeleteThread, user_thread_id }) {
   const thread_id = id;
   const [thread, setThread] = useState(null);
   const [user, setUser] = useState(null);
@@ -50,31 +65,62 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread, h
     setComentariosRefresh((prev) => prev + 1);
   }, []);
 
-  // 1) Extraemos fetchThread como useCallback para poder invocarlo desde cualquier sitio.
-  const fetchThread = useCallback(async () => {
-    setLoading(true);
+  const [isBanned, setIsBanned] = useState(null); // null = cargando
+
+
+  const handleToggleBan = async () => {
+    if (!user) return;
+
+    const endpoint = `${ENDPOINTS.USERS}/${user_thread_id}/toggle-ban`;
+
+
+
     try {
-      const response = await fetch(`${ENDPOINTS.THREADS}/${thread_id}`);
-      if (!response.ok) throw new Error("Error al obtener el hilo");
-      const data = await response.json();
-      const threadData = Array.isArray(data) ? data[0] : data;
-      if (!threadData) throw new Error("Hilo no encontrado");
-      setThread(threadData);
-      setVotes(threadData.votes);
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      // Ahora obtenemos el autor
-      const responseUser = await fetch(`${ENDPOINTS.USERS}/${threadData.user_id}`);
-      if (!responseUser.ok) throw new Error("Error al obtener autor del hilo");
-      const dataUser = await responseUser.json();
-      const userData = Array.isArray(dataUser) ? dataUser[0] : dataUser;
-      setUser(userData);
+      if (!response.ok) throw new Error("Error en toggle ban");
 
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
+      await fetchThread(); // actualiza los datos del usuario e hilo
+    } catch (err) {
+      console.error("Fallo en toggle ban:", err);
     }
-  }, [thread_id]);
+  };
+
+
+  // 1) Extraemos fetchThread como useCallback para poder invocarlo desde cualquier sitio.
+const fetchThread = useCallback(async () => {
+  setLoading(true);
+  try {
+    const response = await fetch(`${ENDPOINTS.THREADS}/${thread_id}`);
+    if (!response.ok) throw new Error("Error al obtener el hilo");
+    const data = await response.json();
+    const threadData = Array.isArray(data) ? data[0] : data;
+    if (!threadData) throw new Error("Hilo no encontrado");
+    setThread(threadData);
+    setVotes(threadData.votes);
+
+    const responseUser = await fetch(`${ENDPOINTS.USERS}/${threadData.user_id}`);
+    if (!responseUser.ok) throw new Error("Error al obtener autor del hilo");
+    const dataUser = await responseUser.json();
+    const userData = Array.isArray(dataUser) ? dataUser[0] : dataUser;
+
+    // NUEVO: obtenemos is_banned del endpoint
+    const isBanned = await fetchIsBannedStatus(threadData.user_id);
+    userData.is_banned = isBanned;
+
+    setUser(userData);
+    setLoading(false);
+  } catch (error) {
+    console.error(error);
+    setLoading(false);
+  }
+}, [thread_id]);
+
 
   // 2) Lo llamamos en el useEffect inicial
   useEffect(() => {
@@ -135,16 +181,19 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread, h
               </div>
             </div>
 
+
             {/* Mostrar los botones de cerrar y eliminar solo si es el autor o un admin */}
             <div className="flex items-center gap-1">
                 
             {(dbUser?.id === thread?.user_id || dbUser?.is_admin) && (
                 <>
+                  <BanUserButton user={user} onToggleBan={handleToggleBan} />
                   <CloseThreadButton thread={thread} onClose={cerrarEsteHilo} />
                   <DeleteThreadButton thread={thread} onDelete={borrarEsteHilo} />
                 </>
             )}
             {console.log(dbUser)}
+
               <IconButton onClick={() => handleVote(thread.id, "up")} size="small">
                 <ArrowUpwardIcon fontSize="small" />
               </IconButton>

@@ -123,3 +123,30 @@ async def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_
     
     return {"message": "Usuario actualizado"}
 
+
+@router.get("/users/is_banned/{user_id}")
+async def is_user_banned(user_id: int, db: Session = Depends(get_db)):
+    result = db.execute(
+        text('SELECT "is_banned" FROM "users" WHERE "id" = :user_id'),
+        {"user_id": user_id}
+    ).fetchone()
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    return result[0]  # Devuelve True o False directamente
+
+
+@router.post("/users/{user_id}/toggle-ban")
+async def toggle_ban_user(user_id: int, db: Session = Depends(get_db)):
+    result = db.execute(
+        text('UPDATE "users" SET "is_banned" = NOT "is_banned" WHERE "id" = :user_id RETURNING "id", "is_banned"'),
+        {"user_id": user_id}
+    ).fetchone()
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    db.commit()
+    estado = "baneado" if result.is_banned else "desbaneado"
+    return {"message": f"Usuario {user_id} {estado} correctamente"}

@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 import LoginButton from './SessionButtons/LoginButton';
 import LogoutButton from './SessionButtons/LogoutButton';
@@ -189,7 +189,7 @@ function UserMenu({ anchorEl, open, handleOpen, handleClose, dbUser }) {
     <>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpen} sx={{ p: 0 }}>
-          <Avatar alt="User" src={dbUser.img_link? dbUser.img_link : "/static/images/avatar/2.jpg"} />
+          <Avatar alt="User" src={dbUser.img_link ? dbUser.img_link : "/static/images/avatar/2.jpg"} />
         </IconButton>
       </Tooltip>
       <Menu
@@ -214,6 +214,21 @@ function Navbar() {
   const [notifications, setNotifications] = React.useState([]);
   const [dbUser, setDbUser] = React.useState();
   const { user } = useAuth0();
+  const navigate = useNavigate();
+
+
+  const handleCreateThread = async () => {
+    if (!dbUser?.id) return;
+    try {
+      const res = await fetch(`${ENDPOINTS.USERS}/is_banned/${dbUser.id}`);
+      if (!res.ok) throw new Error("No se pudo verificar el estado de baneo");
+      const isBanned = await res.json();
+      navigate(isBanned ? "/is_banned" : "/newThread");
+    } catch (e) {
+      console.error(e);
+      // O podrías redirigir a una página de error
+    }
+  };
 
   // Fetch or create user
   React.useEffect(() => {
@@ -288,27 +303,27 @@ function Navbar() {
             <Box sx={{ display: 'flex', alignItems: 'center' }}><LoginButton /></Box>
           ) : (
             <>
-              
+
               {dbUser && (
-               <>
-                <Button variant="contained"><NavLink to={"/newThread"}>New Thread</NavLink></Button>
-                <NotificationMenu
-                  anchorEl={anchorElNotif}
-                  open={Boolean(anchorElNotif)}
-                  handleOpen={handleOpenNotif}
-                  handleClose={handleCloseNotif}
-                  notifications={notifications}
-                  markAllAsRead={markAllAsRead}
-                  deleteAllNotifications={deleteAllNotifications}
-                />
-                <UserMenu
-                  anchorEl={anchorElUser}
-                  open={Boolean(anchorElUser)}
-                  handleOpen={handleOpenUser}
-                  handleClose={handleCloseUser}
-                  dbUser={dbUser}
-                />
-              </>
+                <>
+                  <Button variant="contained" onClick={handleCreateThread}>Crear hilo</Button>
+                  <NotificationMenu
+                    anchorEl={anchorElNotif}
+                    open={Boolean(anchorElNotif)}
+                    handleOpen={handleOpenNotif}
+                    handleClose={handleCloseNotif}
+                    notifications={notifications}
+                    markAllAsRead={markAllAsRead}
+                    deleteAllNotifications={deleteAllNotifications}
+                  />
+                  <UserMenu
+                    anchorEl={anchorElUser}
+                    open={Boolean(anchorElUser)}
+                    handleOpen={handleOpenUser}
+                    handleClose={handleCloseUser}
+                    dbUser={dbUser}
+                  />
+                </>
               )}
 
             </>

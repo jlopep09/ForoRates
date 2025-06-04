@@ -5,11 +5,22 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { ENDPOINTS } from '../../../constants';
 import { useAuth0 } from "@auth0/auth0-react"; // Asegúrate de importar esto si usas Auth0
-
 const formatRelativeTime = (dateString) => {
-    const date = new Date(dateString);
+    // Parsear como UTC aunque no tenga 'Z'
+    const parts = dateString.match(/\d+/g);
+    if (!parts) return 'fecha inválida';
+
+    const date = new Date(Date.UTC(
+        parts[0], // año
+        parts[1] - 1, // mes (0-indexed)
+        parts[2], // día
+        parts[3] || 0, // hora
+        parts[4] || 0, // minuto
+        parts[5] || 0 // segundo
+    ));
+
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000);
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
 
     const minutes = Math.floor(diff / 60);
     const hours = Math.floor(diff / 3600);
@@ -24,6 +35,7 @@ const formatRelativeTime = (dateString) => {
     if (months < 12) return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
     return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
 };
+
 
 export default function Comment({ comment, dbUser, threadId, isClosed }) {
     const [showReplies, setShowReplies] = useState(false);
@@ -119,12 +131,12 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
                             <ArrowDownwardIcon fontSize="small" />
                         </IconButton>
                         <IconButton size="small" onClick={() => {
-                                if(!dbUser) {
-                                    loginWithRedirect();
-                                } else if(!isClosed) {
-                                    setShowReplyBox(!showReplyBox);
-                                }
-                            }}
+                            if (!dbUser) {
+                                loginWithRedirect();
+                            } else if (!isClosed) {
+                                setShowReplyBox(!showReplyBox);
+                            }
+                        }}
                             disabled={isClosed}
                             title={isClosed ? "El hilo está cerrado" : "Responder"}
                         >
