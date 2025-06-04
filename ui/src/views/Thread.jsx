@@ -194,15 +194,19 @@ const fetchThread = useCallback(async () => {
                   <DeleteThreadButton thread={thread} onDelete={borrarEsteHilo} />
                 </>
             )}
-            {console.log(dbUser)}
 
-              <IconButton onClick={() => handleVote(thread.id, "up")} size="small">
-                <ArrowUpwardIcon fontSize="small" />
-              </IconButton>
-              <Typography variant="body2">{votes}</Typography>
-              <IconButton onClick={() => handleVote(thread.id, "down")} size="small">
-                <ArrowDownwardIcon fontSize="small" />
-              </IconButton>
+              {dbUser &&(
+                <>
+                  <IconButton onClick={() => handleVote(thread.id, "up")} size="small">
+                  <ArrowUpwardIcon fontSize="small" />
+                  </IconButton>
+                  <Typography variant="body2">{votes}</Typography>
+                  <IconButton onClick={() => handleVote(thread.id, "down")} size="small">
+                    <ArrowDownwardIcon fontSize="small" />
+                  </IconButton>
+                </>
+            )}
+              
             </div>
           </div>
 
@@ -222,7 +226,7 @@ const fetchThread = useCallback(async () => {
           <div className="flex flex-col gap-4 p-2">
             <p className="text-lg font-semibold text-center mb-0">Comentarios</p>
             
-            {dbUser.is_banned == false &&(
+            {(dbUser?.is_banned) == false &&(
               
               <AddCommentInThread
                 dbUser={dbUser}

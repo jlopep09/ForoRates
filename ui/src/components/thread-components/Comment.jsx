@@ -124,12 +124,17 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
                     </div>
                     <p className="text-sm m-1 text-left"><span className="mr-2 text-neutral-500">|</span>{comment.content}</p>
                     <div className="flex gap-2 mt-2">
-                        <IconButton size="small" onClick={() => handleReaction("like")}>
+                        {dbUser&&(
+                            <>
+                            <IconButton size="small" onClick={() => handleReaction("like")}>
                             <ArrowUpwardIcon fontSize="small" />
                         </IconButton>
                         <IconButton size="small" onClick={() => handleReaction("dislike")}>
                             <ArrowDownwardIcon fontSize="small" />
-                        </IconButton>
+                        </IconButton></>
+                        )}
+                        
+                        
                         <IconButton size="small" onClick={() => {
                             if (!dbUser) {
                                 loginWithRedirect();
