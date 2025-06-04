@@ -1,15 +1,14 @@
+// AddCommentInThread.jsx
+
 import { useState } from 'react';
 import { Button, TextField, Typography } from '@mui/material';
 import { ENDPOINTS } from '../../../constants';
 import { useAuth0 } from '@auth0/auth0-react';
 
-
-const AddCommentInThread = ({ dbUser, threadId, isClosed }) => {
-
-  console.log("El id del thread es ", threadId, " y su valor de is_closed es ", isClosed);
+const AddCommentInThread = ({ dbUser, threadId, isClosed, onCommentAdded }) => {
   const { loginWithRedirect } = useAuth0();
 
-  //Comprobación de hilo cerrado
+  // Si el hilo está cerrado, no permitimos añadir comentarios
   if (isClosed) {
     return (
       <Typography
@@ -25,18 +24,16 @@ const AddCommentInThread = ({ dbUser, threadId, isClosed }) => {
     );
   }
 
-  let userId = undefined;
-  //Comprobación de usuario no identificado
-  if (dbUser == undefined) {
+  // Si no hay usuario autenticado, mostramos botón para iniciar sesión
+  if (!dbUser) {
     return (
       <Button variant="outlined" onClick={() => loginWithRedirect()}>
         Iniciar sesión para comentar
       </Button>
     );
-  } else {
-    userId = dbUser.id
   }
 
+  const userId = dbUser.id;
   const [isFocused, setIsFocused] = useState(false);
   const [comment, setComment] = useState('');
 
@@ -46,7 +43,6 @@ const AddCommentInThread = ({ dbUser, threadId, isClosed }) => {
   };
 
   const handleAccept = async () => {
-
     try {
       const res = await fetch(`${ENDPOINTS.COMMENTS}/add`, {
         method: "POST",
@@ -63,15 +59,19 @@ const AddCommentInThread = ({ dbUser, threadId, isClosed }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Error al enviar comentario");
 
+      // Comentario insertado correctamente
       console.log("Comentario insertado con ID:", data.comment_id);
       setComment('');
       setIsFocused(false);
+
+      // Avisamos al padre (Thread) de que hay un nuevo comentario
+      if (typeof onCommentAdded === 'function') {
+        onCommentAdded();
+      }
     } catch (err) {
       console.error(err);
     }
   };
-
-
 
   return (
     <div className='border border-gray-400 p-2 rounded-md mt-4'>

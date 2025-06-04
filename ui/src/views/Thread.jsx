@@ -6,9 +6,11 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { IconButton, Typography } from "@mui/material";
 import { ArrowBackIos } from "@mui/icons-material";
+import { useNavigate } from "react-router";
 import AddCommentInThread from "../components/thread-components/AddCommentInThread";
 import CommentList from "../components/thread-components/CommentList";
 import CloseThreadButton from "../components/thread-components/CloseThreadButton";
+import DeleteThreadButton from "../components/thread-components/DeleteThreadButton";
 import BanUserButton from "../components/thread-components/BanUserButton";
 
 
@@ -50,12 +52,18 @@ const formatRelativeTime = (dateString) => {
   return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
 };
 
-export default function Thread({ id, index, onBack, dbUser, handleCloseThread, user_thread_id }) {
+export default function Thread({ id, index, onBack, dbUser, handleCloseThread, handleDeleteThread, user_thread_id }) {
   const thread_id = id;
   const [thread, setThread] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [votes, setVotes] = useState(0);
+  const navigate = useNavigate();
+  const [comentariosRefresh, setComentariosRefresh] = useState(0);
+  const onNuevaPublicacion = useCallback(() => {
+    // Incrementamos el contador para disparar la recarga en CommentList
+    setComentariosRefresh((prev) => prev + 1);
+  }, []);
 
   const [isBanned, setIsBanned] = useState(null); // null = cargando
 
@@ -140,6 +148,15 @@ const fetchThread = useCallback(async () => {
     await fetchThread();
   };
 
+  // 4) Método que cierra el hilo y luego vuelve a la pagina principal
+  const borrarEsteHilo = async () => {
+    const confirmar = window.confirm('¿Seguro que quieres eliminar este hilo?');
+    if(!confirmar) return;
+
+    await handleDeleteThread(id, index);
+    navigate('/');
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       {loading ? (
@@ -164,18 +181,19 @@ const fetchThread = useCallback(async () => {
               </div>
             </div>
 
-            {/* Mostrar el botón de cerrar solo si es el autor o un admin */}
 
-
+            {/* Mostrar los botones de cerrar y eliminar solo si es el autor o un admin */}
             <div className="flex items-center gap-1">
-
-              {(dbUser?.id === thread?.user_id || dbUser?.is_admin) && (
-                <div>
+                
+            {(dbUser?.id === thread?.user_id || dbUser?.is_admin) && (
+                <>
                   <BanUserButton user={user} onToggleBan={handleToggleBan} />
                   <CloseThreadButton thread={thread} onClose={cerrarEsteHilo} />
-                </div>
-              )}
-              {console.log(dbUser)}
+                  <DeleteThreadButton thread={thread} onDelete={borrarEsteHilo} />
+                </>
+            )}
+            {console.log(dbUser)}
+
               <IconButton onClick={() => handleVote(thread.id, "up")} size="small">
                 <ArrowUpwardIcon fontSize="small" />
               </IconButton>
@@ -205,11 +223,13 @@ const fetchThread = useCallback(async () => {
               dbUser={dbUser}
               threadId={thread.id}
               isClosed={thread.is_closed}
+              onCommentAdded={onNuevaPublicacion}
             />
             <CommentList
               threadId={thread.id}
               dbUser={dbUser}
               isClosed={thread.is_closed}
+              refreshTrigger={comentariosRefresh}
             />
           </div>
         </div>

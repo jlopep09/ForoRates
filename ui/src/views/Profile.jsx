@@ -188,6 +188,7 @@ export const Profile = () => {
             onBack={handleBackFromThread}
             dbUser={userData}
             handleCloseThread={handleCloseThread}
+            handleDeleteThread={handleDeleteThread}
           />
         </main>
       </ThemeProvider>
