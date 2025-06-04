@@ -44,6 +44,11 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread, h
   const [loading, setLoading] = useState(true);
   const [votes, setVotes] = useState(0);
   const navigate = useNavigate();
+  const [comentariosRefresh, setComentariosRefresh] = useState(0);
+  const onNuevaPublicacion = useCallback(() => {
+    // Incrementamos el contador para disparar la recarga en CommentList
+    setComentariosRefresh((prev) => prev + 1);
+  }, []);
 
   // 1) Extraemos fetchThread como useCallback para poder invocarlo desde cualquier sitio.
   const fetchThread = useCallback(async () => {
@@ -169,11 +174,13 @@ export default function Thread({ id, index, onBack, dbUser, handleCloseThread, h
               dbUser={dbUser}
               threadId={thread.id}
               isClosed={thread.is_closed}
+              onCommentAdded={onNuevaPublicacion}
             />
             <CommentList
               threadId={thread.id}
               dbUser={dbUser}
               isClosed={thread.is_closed}
+              refreshTrigger={comentariosRefresh}
             />
           </div>
         </div>

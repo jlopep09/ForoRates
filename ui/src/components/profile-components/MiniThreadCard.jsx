@@ -31,8 +31,11 @@ const MiniThreadCard = ({ thread, onClick, onClose, onDelete }) => {
         </Typography>
       </CardContent>
       {/* El botón de cerrar hilo, llama a onClose() y el de eliminar hilo llama a onDelete() */}
-      <CloseThreadButton thread={thread} onClose={onClose} />
-      <DeleteThreadButton thread={thread} onDelete={onDelete} />
+      <div className='flex justify-center gap-0 items-center'>
+        <CloseThreadButton thread={thread} onClose={onClose} />
+        <DeleteThreadButton thread={thread} onDelete={onDelete} />
+      </div>
+      
     </Card>
   );
 };

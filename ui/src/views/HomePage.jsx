@@ -354,6 +354,40 @@ export default function HomePage() {
       alert(`No se pudo cerrar el hilo: ${err.message}`);
     }
   };
+    const handleDeleteThread = async (threadId, indexParam) => {
+  // 1) Si el hijo le pasó indexParam inválido, recalculamos:
+  let index = indexParam;
+  if (typeof index !== "number" || index < 0 || index >= posts.length) {
+    index = posts.findIndex((p) => p.id === threadId);
+  }
+  if (index === -1) {
+    console.warn("No se encontró el hilo en el array de posts:", threadId);
+    return;
+  }
+
+  try {
+    const res = await fetch(`${ENDPOINTS.THREADS}/${threadId}`, {
+      method: "DELETE",
+    });
+
+    if (res.status === 204) {
+      // Borrado exitoso: removemos del array
+      setPosts((prev) => prev.filter((_, i) => i !== index));
+
+      // Si tenías el hilo seleccionado en detalle, volvemos al listado
+      if (selectedThread === threadId) {
+        setSelectedThread(null);
+      }
+    } else {
+      const errJson = await res.json();
+      throw new Error(errJson.detail || "Error al eliminar el hilo");
+    }
+  } catch (err) {
+    console.error(err);
+    alert(`No se pudo eliminar el hilo: ${err.message}`);
+  }
+};
+
 
   return (
     <>
@@ -368,6 +402,7 @@ export default function HomePage() {
               onBack={() => setSelectedThread(null)}
               dbUser={dbUser}
               handleCloseThread={handleCloseThread}
+              handleDeleteThread={handleDeleteThread}
             />
           );
         })()

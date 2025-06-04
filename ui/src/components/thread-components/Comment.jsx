@@ -167,7 +167,7 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
                     {showReplies && (
                         <div className="mt-4 pl-6 border-l border-zinc-700 space-y-4">
                             {loadingReplies ? (
-                                <div className="flex items-center gap-2 text-gray-400">
+                                <div className="flex items-center gap-2 text-neutral-500">
                                     <CircularProgress size={16} /> Cargando respuestas...
                                 </div>
                             ) : errorReplies ? (
@@ -176,11 +176,11 @@ export default function Comment({ comment, dbUser, threadId, isClosed }) {
                                 <div className=" text-center text-gray-300 text-sm">No hay respuestas aún.</div>
                             ) : (
                                 replies.map((reply) => (
-                                    <div key={reply.id} className="flex gap-3 text-sm bg-zinc-700 p-3 rounded">
+                                    <div key={reply.id} className="flex gap-3 text-sm bg-neutral-700 p-3 rounded">
                                         <img src={reply.img_link} alt={reply.username} className="w-8 h-8 rounded-full" />
                                         <div>
                                             <p className="font-semibold ">{reply.username} <span className="text-xs text-gray-400">· {formatRelativeTime(reply.date)}</span></p>
-                                            <p>{reply.content}</p>
+                                            <p className="text-left">{reply.content}</p>
                                         </div>
                                     </div>
                                 ))
