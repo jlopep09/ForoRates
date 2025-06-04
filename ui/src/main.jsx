@@ -8,6 +8,7 @@ import ProtectedRoute from './views/ProtectedRoute.jsx';
 import { Ranking } from './views/ranking/Ranking.jsx';
 import { Shop } from './views/shop/Shop.jsx';
 import {NewThread} from './views/NewThread.jsx';
+import ThreadCreationError from './views/ThreadCreationError.jsx';
 
 createRoot(document.getElementById('root')).render(
       <BrowserRouter>
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>}/>
             <Route path="/thread/:id" element={<App />} />
             <Route path="/newThread" element={<ProtectedRoute><NewThread /></ProtectedRoute>}/>
+            <Route path="/is_banned" element={<ProtectedRoute><ThreadCreationError /></ProtectedRoute>}/>
       </Routes>
       </Auth0Provider>
     </BrowserRouter>
