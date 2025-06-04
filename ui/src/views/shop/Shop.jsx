@@ -21,6 +21,7 @@ export const Shop = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [refreshUser, setRefreshUser] = useState(false);
 
   useEffect(() => {
     async function fetchUserData(email) {
@@ -43,7 +44,7 @@ export const Shop = () => {
     } else if (!isAuthenticated) {
       setLoading(false);
     }
-  }, [authLoading, isAuthenticated, user]);
+  }, [authLoading, isAuthenticated, user, refreshUser]);
 
   if (loading || authLoading) {
     return (
@@ -88,7 +89,7 @@ export const Shop = () => {
           <div className='flex flex-col items-center justify-center'><UserBalance UserData={userData} /></div>
           
         </div>
-        <ShopCatalog  userData={userData}/>
+        <ShopCatalog  userData={userData} setRefreshUser={setRefreshUser} refreshedUser={refreshUser}/>
       </main>
     </ThemeProvider>
   );

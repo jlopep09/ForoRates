@@ -119,9 +119,10 @@ def create_notification(
     except Exception as e:
         # Si algo falla, hacemos rollback y devolvemos 500
         db.rollback()
+        
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ocurrió un error al procesar la compra"
+            detail=f"Ocurrió un error al procesar la compra: {str(e)}"
         )
 
     return {"msg": msg_text}

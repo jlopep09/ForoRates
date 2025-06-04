@@ -189,6 +189,7 @@ export const Profile = () => {
             dbUser={userData}
             handleCloseThread={handleCloseThread}
             handleDeleteThread={handleDeleteThread}
+            user_thread_id={userData.id}
           />
         </main>
       </ThemeProvider>

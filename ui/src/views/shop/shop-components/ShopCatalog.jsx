@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ENDPOINTS } from '../../../../constants';
 import { Paper } from '@mui/material';
 
-export const ShopCatalog = ({ userData }) => {
+export const ShopCatalog = ({ userData, setRefreshUser, refreshedUser }) => {
   const [benefits, setBenefits] = useState([]);
   const [loadingBenefits, setLoadingBenefits] = useState(true);
 
@@ -66,6 +66,7 @@ export const ShopCatalog = ({ userData }) => {
       console.log('Respuesta del backend:', data);
 
       // Refrescar lista de beneficios para reflejar el nuevo/actualizado
+      setRefreshUser(!refreshedUser)
       const refreshed = await fetch(`${ENDPOINTS.BENEFITS}/${userData.id}`);
       if (refreshed.ok) {
         const updatedList = await refreshed.json();
@@ -123,8 +124,7 @@ export const ShopCatalog = ({ userData }) => {
           )}
 
           <p className="text-md mt-2 text-neutral-400">
-            Recuerda que para ganar puntos solo tendrás que participar en hilos de
-            otros usuarios.
+            Recuerda que para ganar puntos solo tendrás que participar en hilos.
           </p>
         </Paper>
       </div>
