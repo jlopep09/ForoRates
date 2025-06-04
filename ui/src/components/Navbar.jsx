@@ -24,7 +24,7 @@ import { ENDPOINTS } from '../../constants';
 // Logo components
 function Logo() {
   return (
-    <>
+    <div className='flex flex-row justify-center align-middle items-center pb-1'>
       <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
       <Typography
         variant="h6"
@@ -41,7 +41,7 @@ function Logo() {
       >
         <NavLink to="/">ForoRates</NavLink>
       </Typography>
-    </>
+    </div>
   );
 }
 

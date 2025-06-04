@@ -410,7 +410,7 @@ export default function HomePage() {
       ) : (
         <div className="p-6 space-y-6">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-full md:w-2/3 flex gap-4">
+            <div className="w-full md:w-2/3 flex gap-4  justify-center align-middle items-center">
               <TextField
                 variant="outlined"
                 placeholder="Buscar publicaciones..."
@@ -429,14 +429,16 @@ export default function HomePage() {
                   setSelectedTag(value);
                 }}
               />
-              <IconButton className="ml-4 mt-1" onClick={toggleFilterFavs}>
+              {isAuthenticated&&(
+                <IconButton className="ml-4 mt-1 w-8 h-8 flex justify-center align-middle items-center" onClick={toggleFilterFavs}>
                 {likeFilter ? (
-                  <FavoriteIcon sx={{ color: "white" }} />
+                  <FavoriteIcon className="w-8 h-8" sx={{ color: "white" }} />
                 ) : (
                   <FavoriteBorderIcon />
                 )}
               </IconButton>
-              <Button variant="contained" color="primary" onClick={handleSearchSubmit}>
+              )}
+              <Button className="h-13" variant="contained" color="primary" onClick={handleSearchSubmit}>
                 Buscar
               </Button>
             </div>
@@ -456,6 +458,7 @@ export default function HomePage() {
                     onVote={handleVote}
                     onClick={() => setSelectedThread(post.id)}
                     user={dbUser}
+                    isAuthenticated = {isAuthenticated}
                   />
                 ))}
               </div>

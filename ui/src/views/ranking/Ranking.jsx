@@ -36,7 +36,7 @@ export const Ranking = () => {
       <Navbar />
       <main className='bg-neutral-800'>
         <div className='flex flex-col align-middle justify-start py-10 items-center min-h-100'>
-            <h1 className='uppercase font-bold text-2xl'>Best users</h1>
+            <h1 className='uppercase font-bold text-2xl'>mejores usuarios</h1>
             <hr className='mx-6 w-100 mb-2'/>
             {
                 userData &&(
@@ -45,7 +45,7 @@ export const Ranking = () => {
             }
             {
                 !userData &&(
-                    <p className='font-bold text-blue-300'>The user ranking is comming soon!</p>
+                    <p className='font-bold text-blue-300'>Generando ranking... Si el proceso tarda vuelva en unos minutos.</p>
                 )
             }
         </div>

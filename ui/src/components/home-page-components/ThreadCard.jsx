@@ -5,12 +5,14 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { ENDPOINTS } from '../../../constants';
+import { useAuth0 } from "@auth0/auth0-react";
 
-export default function ThreadCard({ post, onVote, onClick, user }) {
+export default function ThreadCard({ post, onVote, onClick, user, isAuthenticated }) {
     const [liked, setLiked] = useState(false);
     const [userId, setUserID] = useState();
     const [postId, setPostId] = useState();
     const [highlight, setHighlight] = useState(false);
+    const { loginWithRedirect } = useAuth0();
 
     // 1) Guardar user.id y post.id en el estado local
     useEffect(() => {
@@ -94,14 +96,32 @@ export default function ThreadCard({ post, onVote, onClick, user }) {
             sx={{ px: 2, py: 1 }}
             onClick={() => onClick(post.id)}
         >
-            <div className="flex flex-col items-center mr-4 mt-1">
+            <div className="flex flex-col items-center mr-4 mt-1 ">
+                {isAuthenticated&&(
                 <IconButton onClick={(e) => handleVote(e, "up")} size="small">
                     <ArrowUpwardIcon fontSize="small" />
                 </IconButton>
+
+                )}
+                {!isAuthenticated&&(
+                <IconButton className="disable" onClick={()=> {loginWithRedirect();}} size="small">
+                    <ArrowUpwardIcon fontSize="small" />
+                </IconButton>
+
+                )}
                 <Typography variant="body2">{post.votes}</Typography>
+                {isAuthenticated&&(
+                    
                 <IconButton onClick={(e) => handleVote(e, "down")} size="small">
                     <ArrowDownwardIcon fontSize="small" />
                 </IconButton>
+                )}
+                {!isAuthenticated&&(
+                    
+                <IconButton onClick={()=> {loginWithRedirect();}} className="disable" size="small">
+                    <ArrowDownwardIcon fontSize="small" />
+                </IconButton>
+                )}
             </div>
 
             <div className="flex-grow">
