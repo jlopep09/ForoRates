@@ -69,18 +69,18 @@ export default function UserInfoForm({ userData }) {
   return (
     <React.Fragment>
       <Button variant="outlined" onClick={handleClickOpen}>
-        Edit information
+        Editar
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Edit your user information</DialogTitle>
+        <DialogTitle>Modifica tus datos</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please complete the following data fields in the correct format so they can be updated.
+            Por favor complete los siguientes campos de datos en el formato correcto para que puedan actualizarse.
           </DialogContentText>
           <TextField
             margin="dense"
             name="fullname"
-            label="Full Name"
+            label="Nombre completo"
             type="text"
             fullWidth
             variant="standard"
@@ -91,7 +91,7 @@ export default function UserInfoForm({ userData }) {
           <TextField
             margin="dense"
             name="img_link"
-            label="Profile Image URL"
+            label="URL de imagen de perfil"
             type="url"
             fullWidth
             variant="standard"
@@ -100,8 +100,8 @@ export default function UserInfoForm({ userData }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit" onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" onClick={handleSubmit}>Guardar</Button>
         </DialogActions>
       </Dialog>
 
