@@ -11,7 +11,6 @@
    2. [Running with Docker Compose](#running-with-docker-compose)  
    3. [Running Only Frontend on Localhost](#running-only-frontend-on-localhost)  
 
-
 ---
 
 ## Project Information
