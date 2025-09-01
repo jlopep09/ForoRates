@@ -215,7 +215,6 @@ async def get_replies(comment_id: int, db: Session = Depends(get_db)):
 @router.get("/comments/list")
 def list_comments(thread_id: int, db: Session = Depends(get_db)):
     try:
-        # No modificamos esta parte; devolvemos la lista de comentarios principales
         result = db.execute(
             text('''
                 SELECT comments.id,
@@ -227,7 +226,7 @@ def list_comments(thread_id: int, db: Session = Depends(get_db)):
                 FROM comments
                 JOIN users ON users.id = comments.user_id
                 WHERE comments.thread_id = :thread_id
-                  AND comments.comment_id = 0
+                  AND comments.comment_id IS NULL
                 ORDER BY comments.date DESC
             '''),
             {"thread_id": thread_id}
@@ -245,8 +244,11 @@ def list_comments(thread_id: int, db: Session = Depends(get_db)):
         ]
         return comments
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Error al obtener comentarios: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener comentarios: {str(e)}"
+        )
+
 
 
 @router.post("/comments/like")
